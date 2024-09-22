@@ -1,52 +1,57 @@
 import { useState, useEffect } from "react";
 
-import { Box, Button, Stack, Container, TextField, IconButton } from '@mui/material';
+import { Box, Button, Stack, Container, TextField } from '@mui/material';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
-import { Delete as DeleteIcon }from '@mui/icons-material';
 import Typography from '@mui/material/Typography';
 
-import './App.css';
+import Summary from "./Form/Summary";
+import InvoiceItem from "./Form/InvoiceItem";
 
-function InvoiceItem(props){
-	return(
-		<TableRow>
-			<TableCell>
-				<TextField label="Description"/>
-			</TableCell>
-			<TableCell>
-				<TextField label="Rate"/>
-			</TableCell>
-			<TableCell>
-				<TextField label="Qty"/>
-			</TableCell>
-			<TableCell>
-				<TextField label="Amount"/>
-			</TableCell>
-			<TableCell>
-				<Box><IconButton onClick={() => props.handleDelete(props.id)}>
-					<DeleteIcon/>
-				</IconButton></Box>
-			</TableCell>
-		</TableRow>
-	)
-}
+import './App.css';
 
 
 export default function App() {
 	const [items, setItems] = useState([]);
+	const [summary, setSummary] = useState({
+		subtotal: 0.00,
+		tax: 0.00,
+		total: 0.00
+	});
 
+
+	// Update the summary on invoice item change
 	useEffect(() => {
-		console.log(items);
+		let subtotal = 0.00;
+		items.forEach(item => {
+			subtotal += item.amount;
+		})
+
+		let tax = subtotal * 0.05;
+		let total = subtotal + tax;
+
+		setSummary({
+			subtotal: subtotal,
+			tax: tax,
+			total: total,
+		})
 	}, [items])
 
+
 	function addNewItem(){
-		setItems([...items, {id: "1"}]);
+		setItems([...items, { description: "", rate: 0.00, qty: 1, amount: 0.00, }]);
 	}
 
 
 	function deleteItem(index){
 		let temp = [...items];
 		temp.splice(index, 1);
+		setItems(temp);
+	}
+
+
+	function setItemProperty(property, value, index){
+		let temp = [...items];
+		temp[index][property] = value;
 		setItems(temp);
 	}
 
@@ -57,14 +62,9 @@ export default function App() {
 					Invoice Generator
 				</Typography>
 
-				<Stack sx={{ alignItems: "flex-end" }}>
-					<Box>
-						<Button variant="contained">New Invoice</Button>
-					</Box>
-				</Stack>
-
 				<TextField
 					label="Company Name" />
+				
 				<Stack direction="row" sx={{ justifyContent: "space-between" }}>
 					<TextField
 						label="Bill To" />
@@ -101,18 +101,16 @@ export default function App() {
 					<TableBody>
 						{
 							items.map((item, index) => (
-								<InvoiceItem key={index} id={index} handleDelete={deleteItem}/>
+								<InvoiceItem
+									key={index}
+									id={index}
+									data={item}
+									setItemProperty={(property, value) => setItemProperty(property, value, index)}
+									handleDelete={deleteItem}/>
 							))
 						}
 
-						{/* Summary */}
-						<TableRow>
-							<TableCell/>
-							<TableCell/>
-							<TableCell/>
-							<TableCell>asd</TableCell>
-
-						</TableRow>
+						<Summary data={summary}/>
 					</TableBody>
 				</Table>
 			</Stack>
