@@ -4,6 +4,8 @@ import { Box, Button, Stack, Container, TextField } from '@mui/material';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
+import { Add as AddIcon } from '@mui/icons-material';
+
 import Summary from "./Form/Summary";
 import InvoiceItem from "./Form/InvoiceItem";
 
@@ -57,47 +59,52 @@ export default function App() {
 
 	return (
 		<Container>
-			<Stack>
+			<Stack gap="64px" sx={{ paddingTop: "64px", paddingBottom: "64px" }}>
 				<Typography variant="h4" gutterBottom>
 					Invoice Generator
 				</Typography>
 
-				<TextField
-					label="Company Name" />
-				
-				<Stack direction="row" sx={{ justifyContent: "space-between" }}>
+				<Stack gap="24px">
 					<TextField
-						label="Bill To" />
-					<Stack direction="row">
+						label="Company Name" />
+					
+					<Stack direction="row" gap="24px" sx={{ justifyContent: "space-between" }}>
 						<TextField
-							label="Date" />
-						<TextField
-							label="Invoice No." />
+							label="Bill To" />
+						<Stack direction="row" gap="24px">
+							<TextField
+								label="Date" />
+							<TextField
+								label="Invoice No." />
+						</Stack>
+					</Stack>
+
+					<Stack direction="row" gap="24px" sx={{ justifyContent: "space-between" }}>
+						<TextField label="Project Address" />
+						<TextField label="P.O. No." />
+						<TextField label="Terms" />
+						<TextField label="Due Date" />
+						<TextField label="Rep" />
 					</Stack>
 				</Stack>
-
-				<Stack direction="row">
-					<TextField label="Project Address" />
-					<TextField label="P.O. No." />
-					<TextField label="Terms" />
-					<TextField label="Due Date" />
-					<TextField label="Rep" />
-				</Stack>
-
-				<Typography variant="h5">Items</Typography>
 
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell>Description</TableCell>
-							<TableCell>Rate</TableCell>
-							<TableCell>Qty</TableCell>
-							<TableCell>Amount</TableCell>
-							<TableCell><Button
-							variant="contained"
-							onClick={addNewItem}>New Item</Button></TableCell>
+							<TableCell>Item</TableCell>
+							<TableCell sx={{ width: "12.5%" }}>Rate</TableCell>
+							<TableCell sx={{ width: "7.5%" }}>Qty</TableCell>
+							<TableCell sx={{ width: "20%" }} align="right">Amount</TableCell>
+							<TableCell sx={{ width: "15%" }} align="right">
+								<Button
+									size="small"
+									variant="contained"
+									startIcon={<AddIcon/>}
+									onClick={addNewItem}>New Item</Button>
+							</TableCell>
 						</TableRow>
 					</TableHead>
+
 					<TableBody>
 						{
 							items.map((item, index) => (
@@ -113,6 +120,8 @@ export default function App() {
 						<Summary data={summary}/>
 					</TableBody>
 				</Table>
+
+				<Button variant="contained" size="large">Generate</Button>
 			</Stack>
 		</Container>
 
