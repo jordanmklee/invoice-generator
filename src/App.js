@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
 
-import { Box, Button, Stack, Container, TextField } from '@mui/material';
+import { Button, Stack, Container } from '@mui/material';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 import { Add as AddIcon } from '@mui/icons-material';
 
+import Header from "./Form/Header";
 import Summary from "./Form/Summary";
 import InvoiceItem from "./Form/InvoiceItem";
 
 import './App.css';
+import dayjs from "dayjs";
 
 
 export default function App() {
+	const [companyName, setCompanyName] = useState("");
+	const [billTo, setBillTo] = useState("");
+	const [date, setDate] = useState(dayjs(new Date()));
+	const [invoiceNumber, setInvoiceNumber] = useState("");
+	const [projectAddress, setProjectAddress] = useState("");
+	const [poNumber, setPoNumber] = useState("");
+
 	const [items, setItems] = useState([]);
 	const [summary, setSummary] = useState({
 		subtotal: 0.00,
@@ -63,30 +72,15 @@ export default function App() {
 				<Typography variant="h4" gutterBottom>
 					Invoice Generator
 				</Typography>
-
-				<Stack gap="24px">
-					<TextField
-						label="Company Name" />
-					
-					<Stack direction="row" gap="24px" sx={{ justifyContent: "space-between" }}>
-						<TextField
-							label="Bill To" />
-						<Stack direction="row" gap="24px">
-							<TextField
-								label="Date" />
-							<TextField
-								label="Invoice No." />
-						</Stack>
-					</Stack>
-
-					<Stack direction="row" gap="24px" sx={{ justifyContent: "space-between" }}>
-						<TextField label="Project Address" />
-						<TextField label="P.O. No." />
-						<TextField label="Terms" />
-						<TextField label="Due Date" />
-						<TextField label="Rep" />
-					</Stack>
-				</Stack>
+				
+				<Header
+					companyName={companyName} setCompanyName={setCompanyName}
+					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
+					poNumber={poNumber} setPoNumber={setPoNumber}
+					billTo={billTo} setBillTo={setBillTo}
+					date={date} setDate={setDate}
+					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
+					/>
 
 				<Table>
 					<TableHead>
