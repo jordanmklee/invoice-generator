@@ -4,21 +4,22 @@ import { Box, Button, Stack, Container, Modal } from '@mui/material';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
+import { Add as AddIcon } from '@mui/icons-material';
+
 import { PDFViewer } from '@react-pdf/renderer';
 
-import { Add as AddIcon } from '@mui/icons-material';
+import dayjs from "dayjs";
 
 import Header from "./Form/Header";
 import Summary from "./Form/Summary";
 import InvoiceItem from "./Form/InvoiceItem";
+import GeneratedDocument from "./GeneratedDocument";
 
 import './App.css';
-import dayjs from "dayjs";
-import GeneratedDocument from "./GeneratedDocument";
 
 
 export default function App(){
-	const [rendered, setRendered] = useState(false);
+	const [pdfModalOpen, setPdfModalOpen] = useState(false);
 
 	const [companyName, setCompanyName] = useState("");
 	const [billTo, setBillTo] = useState("");
@@ -74,7 +75,7 @@ export default function App(){
 
 	return(
 		<Container>
-			<Modal open={rendered} onClose={() => setRendered(false)}>
+			<Modal open={pdfModalOpen} onClose={() => setPdfModalOpen(false)}>
 				<Box sx={{ position: 'absolute',
 					top: "50%",
 					left: "50%",
@@ -90,7 +91,9 @@ export default function App(){
 							date={date}
 							invoiceNumber={invoiceNumber}
 							projectAddress={projectAddress}
-							poNumber={poNumber}/>
+							poNumber={poNumber}
+							items={items}
+							summary={summary}/>
 					</PDFViewer>
 				</Box>
 			</Modal>
@@ -142,7 +145,7 @@ export default function App(){
 					</TableBody>
 				</Table>
 
-				<Button variant="contained" size="large" onClick={() => setRendered(true)}>Generate</Button>
+				<Button variant="contained" size="large" onClick={() => setPdfModalOpen(true)}>Generate</Button>
 			</Stack>
 		</Container>
 	)
