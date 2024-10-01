@@ -36,7 +36,7 @@ export default function Headers(props){
 						<DatePicker
 							label="Date"
 							value={props.date}
-							onChange={e => props.setDate(e.target.value)}/>
+							onChange={e => props.setDate(e)}/>
 					</LocalizationProvider>
 					
 					<TextField
