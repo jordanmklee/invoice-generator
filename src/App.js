@@ -21,7 +21,7 @@ import './App.css';
 export default function App(){
 	const [pdfModalOpen, setPdfModalOpen] = useState(false);
 
-	const [companyName, setCompanyName] = useState("");
+	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
 	const [billTo, setBillTo] = useState("");
 	const [date, setDate] = useState(dayjs(new Date()));
 	const [invoiceNumber, setInvoiceNumber] = useState("");
@@ -104,7 +104,10 @@ export default function App(){
 				</Typography>
 				
 				<Header
-					companyName={companyName} setCompanyName={setCompanyName}
+					companyName={companyName} setCompanyName={name => {
+						localStorage.setItem("companyName", name);
+						setCompanyName(name);
+					}}
 					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
 					poNumber={poNumber} setPoNumber={setPoNumber}
 					billTo={billTo} setBillTo={setBillTo}
