@@ -11,9 +11,9 @@ import { PDFViewer } from '@react-pdf/renderer';
 import dayjs from "dayjs";
 
 import Header from "./Form/Header";
-import Summary from "./Form/Summary";
 import InvoiceItem from "./Form/InvoiceItem";
 import GeneratedDocument from "./GeneratedDocument";
+import InvoicePreview from "./components/InvoicePreview";
 
 import './App.css';
 
@@ -98,57 +98,70 @@ export default function App(){
 				</Box>
 			</Modal>
 
-			<Stack gap="64px" sx={{ paddingTop: "64px", paddingBottom: "64px" }}>
-				<Typography variant="h4" gutterBottom>
-					Invoice Generator
-				</Typography>
-				
-				<Header
-					companyName={companyName} setCompanyName={name => {
-						localStorage.setItem("companyName", name);
-						setCompanyName(name);
-					}}
-					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
-					poNumber={poNumber} setPoNumber={setPoNumber}
-					billTo={billTo} setBillTo={setBillTo}
-					date={date} setDate={setDate}
-					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
-					/>
+			<Stack direction="row" gap="32px">
+				<Stack gap="64px" sx={{ flex: 1, paddingTop: "64px", paddingBottom: "64px" }}>
+					<Typography variant="h4" gutterBottom>
+						Invoice Generator
+					</Typography>
+					
+					<Header
+						companyName={companyName} setCompanyName={name => {
+							localStorage.setItem("companyName", name);
+							setCompanyName(name);
+						}}
+						projectAddress={projectAddress} setProjectAddress={setProjectAddress}
+						poNumber={poNumber} setPoNumber={setPoNumber}
+						billTo={billTo} setBillTo={setBillTo}
+						date={date} setDate={setDate}
+						invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
+						/>
 
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Item</TableCell>
-							<TableCell sx={{ width: "12.5%" }}>Rate</TableCell>
-							<TableCell sx={{ width: "7.5%" }}>Qty</TableCell>
-							<TableCell sx={{ width: "20%" }} align="right">Amount</TableCell>
-							<TableCell sx={{ width: "15%" }} align="right">
-								<Button
-									size="small"
-									variant="contained"
-									startIcon={<AddIcon/>}
-									onClick={addNewItem}>New Item</Button>
-							</TableCell>
-						</TableRow>
-					</TableHead>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<TableCell>Item</TableCell>
+								<TableCell sx={{ width: "12.5%" }}>Rate</TableCell>
+								<TableCell sx={{ width: "7.5%" }}>Qty</TableCell>
+								<TableCell sx={{ width: "20%" }} align="right">Amount</TableCell>
+								<TableCell sx={{ width: "15%" }} align="right">
+									<Button
+										size="small"
+										variant="contained"
+										startIcon={<AddIcon/>}
+										onClick={addNewItem}>New Item</Button>
+								</TableCell>
+							</TableRow>
+						</TableHead>
 
-					<TableBody>
-						{
-							items.map((item, index) => (
-								<InvoiceItem
-									key={index}
-									id={index}
-									data={item}
-									setItemProperty={(property, value) => setItemProperty(property, value, index)}
-									handleDelete={deleteItem}/>
-							))
-						}
+						<TableBody>
+							{
+								items.map((item, index) => (
+									<InvoiceItem
+										key={index}
+										id={index}
+										data={item}
+										setItemProperty={(property, value) => setItemProperty(property, value, index)}
+										handleDelete={deleteItem}/>
+								))
+							}
+						</TableBody>
+					</Table>
 
-						<Summary data={summary}/>
-					</TableBody>
-				</Table>
+					{/* TODO remove PDF preview, use the react preview for better styling
+					<Button variant="contained" size="large" onClick={() => setPdfModalOpen(true)}>Generate</Button>
+					*/}
+				</Stack>
 
-				<Button variant="contained" size="large" onClick={() => setPdfModalOpen(true)}>Generate</Button>
+				<InvoicePreview
+					companyName={companyName}
+					billTo={billTo}
+					date={date}
+					invoiceNumber={invoiceNumber}
+					projectAddress={projectAddress}
+					poNumber={poNumber}
+					items={items}
+					summary={summary}
+					sx={{ flex: 2 }}/>
 			</Stack>
 		</Container>
 	)
