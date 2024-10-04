@@ -48,7 +48,9 @@ export default function App(){
 		})
 	}, [items])
 
-
+	// TODO define MUI typography styles
+	// TODO define colours globally
+	// TODO make a helper function to parse dollar amounts (and handle NaN errors)
 	return(
 		<Stack direction="row" style={{ height: "100vh", background: "grey" }}>
 			<Modal open={pdfModalOpen} onClose={() => setPdfModalOpen(false)}>

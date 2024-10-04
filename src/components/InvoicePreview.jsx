@@ -7,58 +7,63 @@ import Summary from "./Summary";
 export default function InvoicePreview(props){
 	return(
 		<Stack sx={{ ...props.sx, margin: "64px", padding: "64px", background: "white" }}>
-			<Typography variant="h5">Invoice</Typography>
-			
-			{
-				props.companyName
-					? <Typography>{props.companyName}</Typography>
-					: <></>
-			}
+			<Stack direction="row" justifyContent="space-between">
+				<Typography variant="h5">
+					Invoice <span style={{ color: "blue"}}>{props.invoiceNumber ? "#" + props.invoiceNumber : <></> }</span>
+				</Typography>
+				<div>
+					{
+						props.date
+							? <Typography>{props.date.format("LL")}</Typography>
+							: <></>
+					}
+				</div>
+			</Stack>
 
-			{
-				props.billTo
-					? <Typography>{props.billTo}</Typography>
-					: <></>
-			}
-			
-			{
-				props.date
-					? <Typography>{props.date.format("LL")}</Typography>
-					: <></>
-			}
-			
-			{
-				props.invoiceNumber
-					? <Typography>{props.invoiceNumber}</Typography>
-					: <></>
-			}
+			<Stack direction="row" gap="64px">
+				<div>
+					<Typography>Bill From</Typography>
+					{
+						props.companyName
+							? <Typography>{props.companyName}</Typography>
+							: <></>
+					}
+				</div>
 
-			{
-				props.projectAddress
-					? <Typography>{props.projectAddress}</Typography>
-					: <></>
-			}
-			
-			{
-				props.poNumber
-					? <Typography>{props.poNumber}</Typography>
-					: <></>
-			}
+				<div>
+					<Typography>Bill To</Typography>
+					{
+						props.billTo
+							? <Typography>{props.billTo}</Typography>
+							: <></>
+					}
+					{
+						props.projectAddress
+							? <Typography>{props.projectAddress}</Typography>
+							: <></>
+					}
+					{
+						props.poNumber
+							? <Typography>{props.poNumber}</Typography>
+							: <></>
+					}
+				</div>
+			</Stack>
 
-			<Table>
+			<Table size="small" sx={{ marginTop: "24px" }}>
 				<TableHead>
 					<TableRow>
-						<TableCell>Item</TableCell>
-						<TableCell>Rate</TableCell>
-						<TableCell>Qty</TableCell>
-						<TableCell align="right">Amount</TableCell>
+						<TableCell sx={{ color: "grey" }}>Item</TableCell>
+						<TableCell sx={{ color: "grey" }}>Rate</TableCell>
+						<TableCell sx={{ color: "grey" }}>Qty</TableCell>
+						<TableCell sx={{ color: "grey" }} align="right">Amount</TableCell>
 					</TableRow>
 				</TableHead>
 
 				<TableBody>
 					{
 						props.items.map((item, index) => (
-							<TableRow>
+							<TableRow key={index}>
 								<TableCell>
 									<Typography>{item.description}</Typography>
 								</TableCell>
