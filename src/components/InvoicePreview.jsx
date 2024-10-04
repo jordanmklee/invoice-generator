@@ -2,18 +2,17 @@ import { Stack } from "@mui/material";
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
-import Summary from "../Form/Summary";
+import Summary from "./Summary";
 
 export default function InvoicePreview(props){
 	return(
-		<Stack gap="16px" sx={{ ...props.sx, paddingTop: "64px", paddingBottom: "64px", width: "500px" }}>
+		<Stack gap="64px" sx={{ ...props.sx, margin: "32px", padding: "32px" }}>
 			<Typography variant="h5">{props.companyName}</Typography>
 			<Typography variant="h6">{props.billTo}</Typography>
 			<Typography variant="h6">{props.date.format("LL")}</Typography>
 			<Typography variant="h6">{props.invoiceNumber}</Typography>
 			<Typography variant="h6">{props.projectAddress}</Typography>
 			<Typography variant="h6">{props.poNumber}</Typography>
-			
 
 			<Table>
 				<TableHead>
