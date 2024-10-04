@@ -6,13 +6,44 @@ import Summary from "./Summary";
 
 export default function InvoicePreview(props){
 	return(
-		<Stack gap="64px" sx={{ ...props.sx, margin: "32px", padding: "32px" }}>
-			<Typography variant="h5">{props.companyName}</Typography>
-			<Typography variant="h6">{props.billTo}</Typography>
-			<Typography variant="h6">{props.date.format("LL")}</Typography>
-			<Typography variant="h6">{props.invoiceNumber}</Typography>
-			<Typography variant="h6">{props.projectAddress}</Typography>
-			<Typography variant="h6">{props.poNumber}</Typography>
+		<Stack sx={{ ...props.sx, margin: "64px", padding: "64px", background: "white" }}>
+			<Typography variant="h5">Invoice</Typography>
+			
+			{
+				props.companyName
+					? <Typography>{props.companyName}</Typography>
+					: <></>
+			}
+
+			{
+				props.billTo
+					? <Typography>{props.billTo}</Typography>
+					: <></>
+			}
+			
+			{
+				props.date
+					? <Typography>{props.date.format("LL")}</Typography>
+					: <></>
+			}
+			
+			{
+				props.invoiceNumber
+					? <Typography>{props.invoiceNumber}</Typography>
+					: <></>
+			}
+
+			{
+				props.projectAddress
+					? <Typography>{props.projectAddress}</Typography>
+					: <></>
+			}
+			
+			{
+				props.poNumber
+					? <Typography>{props.poNumber}</Typography>
+					: <></>
+			}
 
 			<Table>
 				<TableHead>

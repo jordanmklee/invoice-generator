@@ -50,7 +50,7 @@ export default function App(){
 
 
 	return(
-		<Stack direction="row">
+		<Stack direction="row" style={{ height: "100vh", background: "grey" }}>
 			<Modal open={pdfModalOpen} onClose={() => setPdfModalOpen(false)}>
 				<Box sx={{ position: 'absolute',
 					top: "50%",
@@ -83,7 +83,7 @@ export default function App(){
 				poNumber={poNumber} setPoNumber={setPoNumber}
 				items={items} setItems={setItems}
 				summary={summary}
-				sx={{ flex: 1 }}/>
+				sx={{ flex: 1, overflowY: "auto" }}/>
 
 			<InvoicePreview
 				companyName={companyName}
@@ -94,7 +94,7 @@ export default function App(){
 				poNumber={poNumber}
 				items={items}
 				summary={summary}
-				sx={{ flex: 2 }}/>
+				sx={{ flex: 2, overflowY: "auto" }}/>
 		</Stack>
 	)
 }

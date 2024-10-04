@@ -127,11 +127,7 @@ export default function Form(props){
 	}
 
 	return(
-		<Stack gap="64px" sx={{ ...props.sx, margin: "32px", padding: "32px" }}>
-			<Typography variant="h4" gutterBottom>
-				Invoice Generator
-			</Typography>
-			
+		<Stack gap="64px" sx={{ ...props.sx, padding: "64px", background: "white" }}>
 			<Header
 				companyName={props.companyName} setCompanyName={name => {
 					localStorage.setItem("companyName", name);
@@ -143,36 +139,41 @@ export default function Form(props){
 				date={props.date} setDate={props.setDate}
 				invoiceNumber={props.invoiceNumber} setInvoiceNumber={props.setInvoiceNumber}/>
 
-			<Table>
-				<TableHead>
-					<TableRow>
-						<TableCell>Item</TableCell>
-						<TableCell sx={{ width: "12.5%" }}>Rate</TableCell>
-						<TableCell sx={{ width: "7.5%" }}>Qty</TableCell>
-						<TableCell sx={{ width: "20%" }} align="right">Amount</TableCell>
-						<TableCell sx={{ width: "15%" }} align="right">
-							<Button
-								size="small"
-								variant="contained"
-								startIcon={<AddIcon/>}
-								onClick={addNewItem}>New Item</Button>
-						</TableCell>
-					</TableRow>
-				</TableHead>
+			
+			<div>
+				<Typography variant="h6">Items</Typography>
 
-				<TableBody>
-					{
-						props.items.map((item, index) => (
-							<InvoiceItem
-								key={index}
-								id={index}
-								data={item}
-								setItemProperty={(property, value) => setItemProperty(property, value, index)}
-								handleDelete={deleteItem}/>
-						))
-					}
-				</TableBody>
-			</Table>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Item</TableCell>
+							<TableCell sx={{ width: "12.5%" }}>Rate</TableCell>
+							<TableCell sx={{ width: "7.5%" }}>Qty</TableCell>
+							<TableCell sx={{ width: "20%" }} align="right">Amount</TableCell>
+							<TableCell sx={{ width: "15%" }} align="right">
+								<Button
+									size="small"
+									variant="contained"
+									startIcon={<AddIcon/>}
+									onClick={addNewItem}>New Item</Button>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+
+					<TableBody>
+						{
+							props.items.map((item, index) => (
+								<InvoiceItem
+									key={index}
+									id={index}
+									data={item}
+									setItemProperty={(property, value) => setItemProperty(property, value, index)}
+									handleDelete={deleteItem}/>
+							))
+						}
+					</TableBody>
+				</Table>
+			</div>
 
 			{/* TODO remove PDF preview, use the react preview for better styling
 			<Button variant="contained" size="large" onClick={() => setPdfModalOpen(true)}>Generate</Button>
