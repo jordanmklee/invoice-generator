@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Stack, AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Stack, AppBar, Toolbar, Typography, Button, Divider } from '@mui/material';
 import { FileDownload } from "@mui/icons-material";
 
 import dayjs from "dayjs";
@@ -59,10 +59,12 @@ export default function App(){
 					<Button
 						variant="contained"
 						startIcon={<FileDownload/>}
+						sx={{ textTransform: "none" }}
 						onClick={() => toPDF()}>
 						Download PDF
 					</Button>
 				</Toolbar>
+				<Divider/>
 			</AppBar>
 
 			<Stack direction="row" style={{ width: "100%", background: "grey", paddingTop: "64px" }}>
