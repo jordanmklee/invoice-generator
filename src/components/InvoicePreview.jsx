@@ -6,7 +6,7 @@ import Summary from "./Summary";
 
 export default function InvoicePreview(props){
 	return(
-		<Stack sx={{ ...props.sx, margin: "64px", padding: "64px", background: "white" }}>
+		<Stack ref={props.pdfRef} sx={{ ...props.sx, margin: "64px", padding: "64px", background: "white" }}>
 			<Stack direction="row" justifyContent="space-between">
 				<Typography variant="h5">
 					Invoice <span style={{ color: "blue"}}>{props.invoiceNumber ? "#" + props.invoiceNumber : <></> }</span>

@@ -127,7 +127,7 @@ export default function Form(props){
 	}
 
 	return(
-		<Stack gap="64px" sx={{ ...props.sx, padding: "64px", background: "white" }}>
+		<Stack gap="64px" sx={{ ...props.sx, padding: "32px", background: "white" }}>
 			<Header
 				companyName={props.companyName} setCompanyName={name => {
 					localStorage.setItem("companyName", name);

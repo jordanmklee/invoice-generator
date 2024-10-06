@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 
-import { Box, Stack, Modal } from '@mui/material';
+import { Box, Stack, Modal, AppBar, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
+import { FileDownload } from "@mui/icons-material";
 
 import { PDFViewer } from '@react-pdf/renderer';
 
 import dayjs from "dayjs";
+
+import { usePDF } from 'react-to-pdf';
 
 import Form from "./components/Form";
 import InvoicePreview from "./components/InvoicePreview";
@@ -14,6 +17,8 @@ import './App.css';
 
 
 export default function App(){
+	const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
+
 	const [pdfModalOpen, setPdfModalOpen] = useState(false);
 
 	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
@@ -52,7 +57,7 @@ export default function App(){
 	// TODO define colours globally
 	// TODO make a helper function to parse dollar amounts (and handle NaN errors)
 	return(
-		<Stack direction="row" style={{ height: "100vh", background: "grey" }}>
+		<Stack direction="col" style={{ height: "100vh" }}>
 			<Modal open={pdfModalOpen} onClose={() => setPdfModalOpen(false)}>
 				<Box sx={{ position: 'absolute',
 					top: "50%",
@@ -75,28 +80,43 @@ export default function App(){
 					</PDFViewer>
 				</Box>
 			</Modal>
+			
+			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
+				<Toolbar sx={{ justifyContent: "space-between" }}>
+					<Typography variant="h5">Invoice Generator</Typography>
+					<Button
+						variant="contained"
+						startIcon={<FileDownload/>}
+						onClick={() => toPDF()}>
+						Download PDF
+					</Button>
+				</Toolbar>
+			</AppBar>
 
-			<Form
-				companyName={companyName} setCompanyName={setCompanyName}
-				billTo={billTo} setBillTo={setBillTo}
-				date={date} setDate={setDate}
-				invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
-				projectAddress={projectAddress} setProjectAddress={setProjectAddress}
-				poNumber={poNumber} setPoNumber={setPoNumber}
-				items={items} setItems={setItems}
-				summary={summary}
-				sx={{ flex: 1, overflowY: "auto" }}/>
+			<Stack direction="row" style={{ width: "100%", background: "grey", paddingTop: "64px" }}>
+				<Form
+					companyName={companyName} setCompanyName={setCompanyName}
+					billTo={billTo} setBillTo={setBillTo}
+					date={date} setDate={setDate}
+					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
+					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
+					poNumber={poNumber} setPoNumber={setPoNumber}
+					items={items} setItems={setItems}
+					summary={summary}
+					sx={{ flex: 1, overflowY: "auto" }}/>
 
-			<InvoicePreview
-				companyName={companyName}
-				billTo={billTo}
-				date={date}
-				invoiceNumber={invoiceNumber}
-				projectAddress={projectAddress}
-				poNumber={poNumber}
-				items={items}
-				summary={summary}
-				sx={{ flex: 2, overflowY: "auto" }}/>
+				<InvoicePreview
+					pdfRef={targetRef}
+					companyName={companyName}
+					billTo={billTo}
+					date={date}
+					invoiceNumber={invoiceNumber}
+					projectAddress={projectAddress}
+					poNumber={poNumber}
+					items={items}
+					summary={summary}
+					sx={{ flex: 2, overflowY: "auto" }}/>
+			</Stack>
 		</Stack>
 	)
 }
