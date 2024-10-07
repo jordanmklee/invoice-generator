@@ -55,7 +55,7 @@ export default function App(){
 		<Stack direction="col" style={{ height: "100vh" }}>
 			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
 				<Toolbar sx={{ justifyContent: "space-between" }}>
-					<Typography variant="h5">Invoice Generator</Typography>
+					<Typography variant="h6" style={{ color: "grey" }}>jordanmklee / <span style={{ color: "black" }}>invoice-generator</span></Typography>
 					<Button
 						variant="contained"
 						startIcon={<FileDownload/>}
