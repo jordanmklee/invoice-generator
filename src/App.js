@@ -10,12 +10,12 @@ import { usePDF } from 'react-to-pdf';
 import Form from "./components/Form";
 import InvoicePreview from "./components/InvoicePreview";
 
+import generatePDF from "./PDFGenerator";
+
 import './App.css';
 
 
 export default function App(){
-	const { toPDF, targetRef } = usePDF({filename: 'page.pdf'});
-
 	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
 	const [billTo, setBillTo] = useState("");
 	const [date, setDate] = useState(dayjs(new Date()));
@@ -29,8 +29,7 @@ export default function App(){
 		tax: 0.00,
 		total: 0.00
 	});
-
-
+	
 	// Update the summary on invoice item change
 	useEffect(() => {
 		let subtotal = 0.00;
@@ -60,8 +59,17 @@ export default function App(){
 						variant="contained"
 						startIcon={<FileDownload/>}
 						sx={{ textTransform: "none" }}
-						onClick={() => toPDF()}>
-						Download PDF
+						onClick={() => generatePDF(
+							companyName,
+							billTo,
+							date,
+							invoiceNumber,
+							projectAddress,
+							poNumber,
+							items,
+							summary
+							)}>
+						Generate PDF
 					</Button>
 				</Toolbar>
 				<Divider/>
@@ -80,7 +88,6 @@ export default function App(){
 					sx={{ flex: 1, overflowY: "auto" }}/>
 
 				<InvoicePreview
-					pdfRef={targetRef}
 					companyName={companyName}
 					billTo={billTo}
 					date={date}
