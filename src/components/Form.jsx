@@ -17,12 +17,14 @@ import { Close as CloseIcon } from '@mui/icons-material';
 function FormTextfield(props){
 	return(
 		<Stack sx={{ flex: 1 }}>
-			<Typography variant="overline">{props.label}</Typography>
+			<Typography variant="overline" sx={{ color: "#969696" }}>{props.label}</Typography>
 			<TextField
 				size="small"
 				placeholder={props.placeholder}
 				value={props.value}
-				onChange={e => props.onChange(e.target.value)} />
+				onChange={e => props.onChange(e.target.value)}
+				multiline={props.multiline}
+				minRows={3}/>
 		</Stack>
 	)
 }
@@ -118,81 +120,80 @@ export default function Form(props){
 		props.setItems(temp);
 	}
 
+
 	return(
 		<Stack gap="32px" sx={{ ...props.sx, padding: "32px" }}>
-			<Typography variant="h5">Invoice Details</Typography>
-
 			<Card>
 				<CardContent>
 					<Stack padding="16px" gap="32px">
-						<Stack gap="32px" direction="row">
-							<FormTextfield
-								label="Invoice Number"
-								value={props.invoiceNumber}
-								onChange={props.setInvoiceNumber}/>
+						<Typography variant="h5">Invoice Details</Typography>
+						
+						<Stack gap="32px" direction="row" >
+							<Stack style={{ flex: 2 }}>
+								<FormTextfield
+									label="Company Name"
+									value={props.companyName}
+									onChange={props.setCompanyName}/>
+							</Stack>
 
-							<Stack sx={{ flex: 1 }}>
-								<Typography variant="overline">Date</Typography>
-								<LocalizationProvider dateAdapter={AdapterDayjs}>
-									<DatePicker
-										slotProps={{ textField: { size: "small" } }}
-										format="LL"
-										value={props.date}
-										onChange={e => props.setDate(e)} />
-								</LocalizationProvider>
+							<Stack gap="16px" style={{ flex: 1 }}>
+								<Stack>
+									<Typography variant="overline" sx={{ color: "#969696" }}>Date</Typography>
+									<LocalizationProvider dateAdapter={AdapterDayjs}>
+										<DatePicker
+											slotProps={{ textField: { size: "small" } }}
+											format="LL"
+											value={props.date}
+											onChange={e => props.setDate(e)}/>
+									</LocalizationProvider>
+								</Stack>
+
+								<FormTextfield
+									label="Invoice Number"
+									value={props.invoiceNumber}
+									onChange={props.setInvoiceNumber}/>
 							</Stack>
 						</Stack>
 
 						<Stack gap="32px" direction="row">
 							<FormTextfield
-								label="Company Name"
-								value={props.companyName}
-								onChange={props.setCompanyName} />
+								label="Bill To"
+								value={props.customerName}
+								onChange={props.setCustomerName}/>
 
-							<Stack gap="16px" sx={{ flex: 1 }}>
-								<FormTextfield
-									label="Bill To"
-									value={props.customerName}
-									onChange={props.setCustomerName} />
-
-								<FormTextfield
-									label="Customer Address"
-									value={props.projectAddress}
-									onChange={props.setProjectAddress} />
-							</Stack>
+							<FormTextfield
+								label="Address"
+								value={props.projectAddress}
+								onChange={props.setProjectAddress}/>
 						</Stack>
 
-						<Stack>
-							<Typography variant="overline">Notes</Typography>
-							<TextField
-								size="small"
-								multiline
-								minRows={3}
+						<FormTextfield
+								label="Notes (optional)"
 								value={props.notes}
-								onChange={e => props.setNotes(e.target.value)}/>
-						</Stack>
+								onChange={props.setNotes}
+								multiline/>
 					</Stack>
 				</CardContent>
 			</Card>
 
-			<Typography variant="h5">Items</Typography>
 			<Stack gap="16px" direction="row" alignItems="flex-start" justifyContent="space-between">
 				{/* Items Form */}
-				<Card sx={{ flex: 1 }}>
+				<Card sx={{ flex: 3 }}>
 					<CardContent>
 						<Stack padding="16px" gap="16px">
+							<Typography variant="h5">Items</Typography>
 
 							<Table>
 								<TableBody>
 									<TableRow>
-										<TableCell sx={{ width: "60%" }}>
-											<Typography variant="overline">Description</Typography>
+										<TableCell sx={{ width: "50%" }}>
+											<Typography variant="overline" sx={{ color: "#969696" }}>Description</Typography>
+										</TableCell>
+										<TableCell sx={{ width: "15%" }}>
+											<Typography variant="overline" sx={{ color: "#969696" }}>Quantity</Typography>
 										</TableCell>
 										<TableCell>
-											<Typography variant="overline">Quantity</Typography>
-										</TableCell>
-										<TableCell>
-											<Typography variant="overline">Rate</Typography>
+											<Typography variant="overline" sx={{ color: "#969696" }}>Rate</Typography>
 										</TableCell>
 										<TableCell/>
 									</TableRow>
@@ -221,41 +222,40 @@ export default function Form(props){
 				</Card>
 				
 				{/* Summary */}
-				<Card>
+				<Card sx={{ flex: 1 }}>
 					<CardContent>
 						<Table>
 							<TableBody>
 								<TableRow>
 									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">Subtotal</Typography>
+										<Typography variant="body1" style={{ color: "#969696" }}>Subtotal</Typography>
 									</TableCell>
 									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">$ {parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
+										<Typography variant="body1">${parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
 									</TableCell>
 								</TableRow>
 
 								<TableRow>
 									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">Tax</Typography>
+										<Typography variant="body1" style={{ color: "#969696" }}>Tax</Typography>
 									</TableCell>
 									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">$ {parseFloat(props.summary.tax).toFixed(2)}</Typography>
+										<Typography variant="body1">${parseFloat(props.summary.tax).toFixed(2)}</Typography>
 									</TableCell>
 								</TableRow>
 
 								<TableRow>
 									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="h6" style={{ fontWeight: 600 }}>Total</Typography>
+										<Typography variant="h6" style={{ color: "#969696" }}>Total</Typography>
 									</TableCell>
 									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="h6" style={{ fontWeight: 600 }}>$ {parseFloat(props.summary.total).toFixed(2)}</Typography>
+										<Typography variant="h6" style={{ fontWeight: 600 }}>${parseFloat(props.summary.total).toFixed(2)}</Typography>
 									</TableCell>
 								</TableRow>
 							</TableBody>
 						</Table>
 					</CardContent>
 				</Card>
-
 			</Stack>
 		</Stack>
 	)

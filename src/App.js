@@ -53,7 +53,7 @@ export default function App(){
 
 	// TODO define MUI typography styles
 	// TODO define colours globally
-	// TODO make a helper function to parse dollar amounts (and handle NaN errors)
+	// TODO make a helper function to parse dollar amounts (and handle NaN errors when generating)
 	return(
 		<Stack direction="col" style={{ background: "lightgrey" }}>
 			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
