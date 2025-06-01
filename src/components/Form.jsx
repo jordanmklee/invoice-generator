@@ -29,6 +29,14 @@ function FormTextfield(props){
 
 
 function InvoiceItem(props){
+	// Add a new InvoiceItem if "enter" is pressed when typing in a TextField
+	function handleEnterKeypress(e){
+		if (e.key === 'Enter') {
+			e.preventDefault();	// Prevent default action
+			props.addNewItem();
+		}
+	}
+
 	return(
 		<TableRow>
 			<TableCell sx={{ borderBottom: "none" }}>
@@ -36,7 +44,9 @@ function InvoiceItem(props){
 					fullWidth
 					size="small"
 					value={props.data.description}
-					onChange={e => props.setItemProperty("description", e.target.value)} />
+					onKeyDown={handleEnterKeypress}
+					onChange={e => props.setItemProperty("description", e.target.value)}
+					autoFocus={props.autoFocus}/>
 			</TableCell>
 
 			<TableCell sx={{ borderBottom: "none" }}>
@@ -46,6 +56,7 @@ function InvoiceItem(props){
 					fullWidth
 					size="small"
 					value={props.data.qty}
+					onKeyDown={handleEnterKeypress}
 					onChange={e => {
 						// Only allow number entry
 						if (e.target.value.match(/^(|\d)+$/)) {
@@ -64,6 +75,7 @@ function InvoiceItem(props){
 					fullWidth
 					size="small"
 					value={props.data.rate || ""}
+					onKeyDown={handleEnterKeypress}
 					onChange={e => {
 						// Only allow number entry up to two decimal places
 						if (e.target.value.match(/^[0-9]*(\.[0-9]{0,2})?$/)) {
@@ -191,7 +203,10 @@ export default function Form(props){
 												id={index}
 												data={item}
 												setItemProperty={(property, value) => setItemProperty(property, value, index)}
-												handleDelete={deleteItem}/>
+												handleDelete={deleteItem}
+												// Autofocus newly added items
+												autoFocus={ (index === props.items.length - 1) && index !== 0 }
+												addNewItem={addNewItem}/>
 										))
 									}
 								</TableBody>
