@@ -62,25 +62,6 @@ export default function App(){
 			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
 				<Toolbar sx={{ justifyContent: "space-between" }}>
 					<Typography variant="h6" style={{ color: "grey" }}>jordanmklee / <span style={{ color: "black" }}>invoice-generator</span></Typography>
-					<Button
-						variant="contained"
-						startIcon={<FileDownload/>}
-						sx={{ textTransform: "none" }}
-						onClick={() => generatePDF(
-							companyName,
-							companyEmail,
-							companyPhone,
-							companyBusinessNumber,
-							date,
-							invoiceNumber,
-							customerName,
-							projectAddress,
-							notes,
-							items,
-							summary
-							)}>
-						Generate PDF
-					</Button>
 				</Toolbar>
 				<Divider/>
 			</AppBar>

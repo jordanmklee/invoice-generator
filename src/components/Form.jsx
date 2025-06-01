@@ -1,5 +1,5 @@
 import { Button, Stack } from '@mui/material';
-import { TextField, IconButton, InputAdornment,  } from '@mui/material';
+import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { Table, TableBody, TableRow, TableCell } from '@mui/material';
 import { Card, CardContent } from '@mui/material';
 
@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 
 import { Add as AddIcon } from '@mui/icons-material';
 import { Close as CloseIcon } from '@mui/icons-material';
+
+import generatePDF from '../PDFGenerator';
 
 
 // Wrapper for MUI Textfield with styles and label
@@ -118,6 +120,22 @@ export default function Form(props){
 		let temp = [...props.items];
 		temp[index][property] = value;
 		props.setItems(temp);
+	}
+
+	function handleGeneratePDFClick(){
+		generatePDF(
+			props.companyName,
+			props.companyEmail,
+			props.companyPhone,
+			props.companyBusinessNumber,
+			props.date,
+			props.invoiceNumber,
+			props.customerName,
+			props.projectAddress,
+			props.notes,
+			props.items,
+			props.summary
+		)
 	}
 
 
@@ -232,6 +250,9 @@ export default function Form(props){
 								variant="text"
 								startIcon={<AddIcon/>}
 								onClick={addNewItem}>New Item</Button>
+							<Button
+								variant="contained"
+								onClick={handleGeneratePDFClick}>Generate PDF</Button>
 						</Stack>
 					</CardContent>
 				</Card>
