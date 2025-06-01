@@ -4,11 +4,11 @@ import autoTable from 'jspdf-autotable';
 
 export default function generatePDF(
 							companyName,
-							billTo,
+							customerName,
 							date,
 							invoiceNumber,
 							projectAddress,
-							poNumber,
+							notes,
 							items,
 							summary
 						){
@@ -100,7 +100,7 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: margin, right: margin },
 		head: [['Bill to', 'Address']],
-		body: [[billTo, projectAddress]],
+		body: [[customerName, projectAddress]],
 		headStyles: {
 			fillColor: "#FFFFFF",
 			textColor: "#000000",
@@ -120,7 +120,7 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: margin, right: margin },
 		head: [['Notes']],
-		body: [[poNumber]],
+		body: [[notes]],
 		headStyles: {
 			fillColor: "#FFFFFF",
 			textColor: "#000000",

@@ -1,5 +1,7 @@
-import { Box, Button, Stack, Divider, Card } from '@mui/material';
-import { TextField, IconButton, InputAdornment } from '@mui/material';
+import { Button, Stack } from '@mui/material';
+import { TextField, IconButton, InputAdornment,  } from '@mui/material';
+import { Table, TableBody, TableRow, TableCell } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,99 +13,33 @@ import { Add as AddIcon } from '@mui/icons-material';
 import { Close as CloseIcon } from '@mui/icons-material';
 
 
-function Header(props){
+// Wrapper for MUI Textfield with styles and label
+function FormTextfield(props){
 	return(
-		<Stack gap="16px">
-			<Stack direction="row" alignItems="center" justifyContent="space-between">
-				<Stack direction="row" gap="8px" alignItems="center">
-					<Typography variant="h6">Invoice</Typography>
-					<TextField
-						size="small"
-						placeholder="Number"
-						value={props.invoiceNumber}
-						onChange={e => props.setInvoiceNumber(e.target.value)} />
-				</Stack>
-
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<DatePicker
-						slotProps={{ textField: { size: "small" } }}
-						format="LL"
-						value={props.date}
-						onChange={e => props.setDate(e)} />
-				</LocalizationProvider>
-			</Stack>
-			
-			<Stack>
-				<Typography variant="overline">Bill From</Typography>
-				<TextField
-					size="small"
-					placeholder="Company Name"
-					value={props.companyName}
-					onChange={e => props.setCompanyName(e.target.value)}/>
-			</Stack>
-
-			<Stack>
-				<Typography variant="overline">Bill To</Typography>
-				<TextField
-					size="small"
-					placeholder="Company Name"
-					value={props.billTo}
-					onChange={e => props.setBillTo(e.target.value)} />
-			</Stack>
-			
-			<Stack>
-				<Typography variant="overline">PO Number</Typography>
-				<TextField
-					size="small"
-					placeholder="P.O. Number"
-					value={props.poNumber}
-					onChange={e => props.setPoNumber(e.target.value)}/>
-			</Stack>
-
-			<Stack>
-				<Typography variant="overline">Address</Typography>
-				<TextField
-					size="small"
-					placeholder="Project Address"
-					value={props.projectAddress}
-					onChange={e => props.setProjectAddress(e.target.value)}/>
-			</Stack>
+		<Stack sx={{ flex: 1 }}>
+			<Typography variant="overline">{props.label}</Typography>
+			<TextField
+				size="small"
+				placeholder={props.placeholder}
+				value={props.value}
+				onChange={e => props.onChange(e.target.value)} />
 		</Stack>
 	)
 }
 
+
 function InvoiceItem(props){
 	return(
-		<Stack direction="row" gap="8px" alignItems="center">
-			<Box flex="4">
+		<TableRow>
+			<TableCell sx={{ borderBottom: "none" }}>
 				<TextField
-					placeholder="Description"
 					fullWidth
 					size="small"
 					value={props.data.description}
 					onChange={e => props.setItemProperty("description", e.target.value)} />
-			</Box>
+			</TableCell>
 
-			<Box flex="1">
-				<TextField
-					placeholder="0.00"
-					fullWidth
-					size="small"
-					value={props.data.rate || ""}
-					onChange={e => {
-						// Only allow number entry up to two decimal places
-						if (e.target.value.match(/^[0-9]*(\.[0-9]{0,2})?$/)) {
-							props.setItemProperty("rate", e.target.value);
-							props.setItemProperty("amount", (e.target.value * props.data.qty));
-						}
-					}}
-					slotProps={{
-						input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
-						htmlInput: { inputMode: "numeric" } // Prompt mobile browsers to open a numpad instead of keyboard
-					}} />
-			</Box>
-
-			<Box flex="1">
+			<TableCell sx={{ borderBottom: "none" }}>
 				<TextField
 					placeholder="0"
 					type="number"
@@ -120,20 +56,40 @@ function InvoiceItem(props){
 					slotProps={{
 						htmlInput: { inputMode: "numeric" } // Prompt mobile browsers to open a numpad instead of keyboard
 					}} />
-			</Box>
+			</TableCell>
 
-			<Box>
+			<TableCell sx={{ borderBottom: "none" }}>
+				<TextField
+					placeholder="0.00"
+					fullWidth
+					size="small"
+					value={props.data.rate || ""}
+					onChange={e => {
+						// Only allow number entry up to two decimal places
+						if (e.target.value.match(/^[0-9]*(\.[0-9]{0,2})?$/)) {
+							props.setItemProperty("rate", e.target.value);
+							props.setItemProperty("amount", (e.target.value * props.data.qty));
+						}
+					}}
+					slotProps={{
+						input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
+						htmlInput: { inputMode: "numeric" } // Prompt mobile browsers to open a numpad instead of keyboard
+					}} />
+			</TableCell>
+
+			<TableCell sx={{ borderBottom: "none" }}>
 				<IconButton size="small" onClick={() => props.handleDelete(props.id)}>
 					<CloseIcon />
 				</IconButton>
-			</Box>
-		</Stack>
+			</TableCell>
+		</TableRow>
 	)
 }
 
+
 export default function Form(props){
 	function addNewItem(){
-		props.setItems([...props.items, { description: "", rate: 0.00, qty: 1, amount: 0.00, }]);
+		props.setItems([...props.items, { description: "", qty: 1, rate: 0.00, amount: 0.00, }]);
 	}
 
 
@@ -151,38 +107,140 @@ export default function Form(props){
 	}
 
 	return(
-		<Stack gap="32px" sx={{ ...props.sx, padding: "32px", background: "white" }}>
-			<Header
-				companyName={props.companyName} setCompanyName={name => {
-					localStorage.setItem("companyName", name);
-					props.setCompanyName(name);
-				}}
-				projectAddress={props.projectAddress} setProjectAddress={props.setProjectAddress}
-				poNumber={props.poNumber} setPoNumber={props.setPoNumber}
-				billTo={props.billTo} setBillTo={props.setBillTo}
-				date={props.date} setDate={props.setDate}
-				invoiceNumber={props.invoiceNumber} setInvoiceNumber={props.setInvoiceNumber}/>
+		<Stack gap="32px" sx={{ ...props.sx, padding: "32px" }}>
+			<Typography variant="h5">Invoice Details</Typography>
 
-			<Divider/>
+			<Card>
+				<CardContent>
+					<Stack padding="16px" gap="32px">
+						<Stack gap="32px" direction="row">
+							<FormTextfield
+								label="Invoice Number"
+								value={props.invoiceNumber}
+								onChange={props.setInvoiceNumber}/>
 
-			<Stack gap="16px">
-				<Typography variant="overline">Items</Typography>
+							<Stack sx={{ flex: 1 }}>
+								<Typography variant="overline">Date</Typography>
+								<LocalizationProvider dateAdapter={AdapterDayjs}>
+									<DatePicker
+										slotProps={{ textField: { size: "small" } }}
+										format="LL"
+										value={props.date}
+										onChange={e => props.setDate(e)} />
+								</LocalizationProvider>
+							</Stack>
+						</Stack>
+
+						<Stack gap="32px" direction="row">
+							<FormTextfield
+								label="Company Name"
+								value={props.companyName}
+								onChange={props.setCompanyName} />
+
+							<Stack gap="16px" sx={{ flex: 1 }}>
+								<FormTextfield
+									label="Bill To"
+									value={props.customerName}
+									onChange={props.setCustomerName} />
+
+								<FormTextfield
+									label="Customer Address"
+									value={props.projectAddress}
+									onChange={props.setProjectAddress} />
+							</Stack>
+						</Stack>
+
+						<Stack>
+							<Typography variant="overline">Notes</Typography>
+							<TextField
+								size="small"
+								multiline
+								minRows={3}
+								value={props.notes}
+								onChange={e => props.setNotes(e.target.value)}/>
+						</Stack>
+					</Stack>
+				</CardContent>
+			</Card>
+
+			<Typography variant="h5">Items</Typography>
+			<Stack gap="16px" direction="row" alignItems="flex-start" justifyContent="space-between">
+				{/* Items Form */}
+				<Card sx={{ flex: 1 }}>
+					<CardContent>
+						<Stack padding="16px" gap="16px">
+
+							<Table>
+								<TableBody>
+									<TableRow>
+										<TableCell sx={{ width: "60%" }}>
+											<Typography variant="overline">Description</Typography>
+										</TableCell>
+										<TableCell>
+											<Typography variant="overline">Quantity</Typography>
+										</TableCell>
+										<TableCell>
+											<Typography variant="overline">Rate</Typography>
+										</TableCell>
+										<TableCell/>
+									</TableRow>
+									{
+										props.items.map((item, index) => (
+											<InvoiceItem
+												key={index}
+												id={index}
+												data={item}
+												setItemProperty={(property, value) => setItemProperty(property, value, index)}
+												handleDelete={deleteItem}/>
+										))
+									}
+								</TableBody>
+							</Table>
+
+							<Button
+								variant="text"
+								startIcon={<AddIcon/>}
+								onClick={addNewItem}>New Item</Button>
+						</Stack>
+					</CardContent>
+				</Card>
 				
-				{
-					props.items.map((item, index) => (
-						<InvoiceItem
-						key={index}
-						id={index}
-						data={item}
-						setItemProperty={(property, value) => setItemProperty(property, value, index)}
-						handleDelete={deleteItem}/>
-					))
-				}
-			
-				<Button
-					variant="outlined"
-					startIcon={<AddIcon/>}
-					onClick={addNewItem}>New Item</Button>
+				{/* Summary */}
+				<Card>
+					<CardContent>
+						<Table>
+							<TableBody>
+								<TableRow>
+									<TableCell sx={{ borderBottom: "none" }}>
+										<Typography variant="body1">Subtotal</Typography>
+									</TableCell>
+									<TableCell align="right" sx={{ borderBottom: "none" }}>
+										<Typography variant="body1">$ {parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
+									</TableCell>
+								</TableRow>
+
+								<TableRow>
+									<TableCell sx={{ borderBottom: "none" }}>
+										<Typography variant="body1">Tax</Typography>
+									</TableCell>
+									<TableCell align="right" sx={{ borderBottom: "none" }}>
+										<Typography variant="body1">$ {parseFloat(props.summary.tax).toFixed(2)}</Typography>
+									</TableCell>
+								</TableRow>
+
+								<TableRow>
+									<TableCell sx={{ borderBottom: "none" }}>
+										<Typography variant="h6" style={{ fontWeight: 600 }}>Total</Typography>
+									</TableCell>
+									<TableCell align="right" sx={{ borderBottom: "none" }}>
+										<Typography variant="h6" style={{ fontWeight: 600 }}>$ {parseFloat(props.summary.total).toFixed(2)}</Typography>
+									</TableCell>
+								</TableRow>
+							</TableBody>
+						</Table>
+					</CardContent>
+				</Card>
+
 			</Stack>
 		</Stack>
 	)

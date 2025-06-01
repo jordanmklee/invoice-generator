@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 
-import { Stack, AppBar, Toolbar, Typography, Button, Divider } from '@mui/material';
+import { Stack, AppBar, Toolbar, Typography, Button, Divider, Container } from '@mui/material';
 import { FileDownload } from "@mui/icons-material";
 
 import dayjs from "dayjs";
 
-import { usePDF } from 'react-to-pdf';
-
 import Form from "./components/Form";
-import InvoicePreview from "./components/InvoicePreview";
 
 import generatePDF from "./PDFGenerator";
 
@@ -17,13 +14,20 @@ import './App.css';
 
 export default function App(){
 	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
-	const [billTo, setBillTo] = useState("");
+	
 	const [date, setDate] = useState(dayjs(new Date()));
 	const [invoiceNumber, setInvoiceNumber] = useState("");
-	const [projectAddress, setProjectAddress] = useState("");
-	const [poNumber, setPoNumber] = useState("");
 
-	const [items, setItems] = useState([]);
+	const [customerName, setCustomerName] = useState("");
+	const [projectAddress, setProjectAddress] = useState("");
+	const [notes, setNotes] = useState("");
+
+	const [items, setItems] = useState([{
+		description: "",
+		qty: 1,
+		rate: 0.00,
+		amount: 0.00
+	}]);
 	const [summary, setSummary] = useState({
 		subtotal: 0.00,
 		tax: 0.00,
@@ -51,7 +55,7 @@ export default function App(){
 	// TODO define colours globally
 	// TODO make a helper function to parse dollar amounts (and handle NaN errors)
 	return(
-		<Stack direction="col" style={{ height: "100vh" }}>
+		<Stack direction="col" style={{ background: "lightgrey" }}>
 			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
 				<Toolbar sx={{ justifyContent: "space-between" }}>
 					<Typography variant="h6" style={{ color: "grey" }}>jordanmklee / <span style={{ color: "black" }}>invoice-generator</span></Typography>
@@ -61,11 +65,11 @@ export default function App(){
 						sx={{ textTransform: "none" }}
 						onClick={() => generatePDF(
 							companyName,
-							billTo,
+							customerName,
 							date,
 							invoiceNumber,
 							projectAddress,
-							poNumber,
+							notes,
 							items,
 							summary
 							)}>
@@ -75,29 +79,18 @@ export default function App(){
 				<Divider/>
 			</AppBar>
 
-			<Stack direction="row" style={{ width: "100%", background: "grey", paddingTop: "64px" }}>
+			<Container style={{ paddingTop: "64px", paddingBottom: "128px" }}>
 				<Form
 					companyName={companyName} setCompanyName={setCompanyName}
-					billTo={billTo} setBillTo={setBillTo}
+					customerName={customerName} setCustomerName={setCustomerName}
 					date={date} setDate={setDate}
 					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
 					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
-					poNumber={poNumber} setPoNumber={setPoNumber}
+					notes={notes} setNotes={setNotes}
 					items={items} setItems={setItems}
 					summary={summary}
-					sx={{ flex: 1, overflowY: "auto" }}/>
-
-				<InvoicePreview
-					companyName={companyName}
-					billTo={billTo}
-					date={date}
-					invoiceNumber={invoiceNumber}
-					projectAddress={projectAddress}
-					poNumber={poNumber}
-					items={items}
-					summary={summary}
 					sx={{ flex: 2, overflowY: "auto" }}/>
-			</Stack>
+			</Container>
 		</Stack>
 	)
 }
