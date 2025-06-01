@@ -34,76 +34,61 @@ export default function generatePDF(
 		cursorY += lineHeight;
 	}
 
-	function write(text){
-		doc.splitTextToSize(text, usableWidth).forEach((line) => {
-			doc.text(line, cursorX, cursorY);
-			cursorNewLine();
-		});
-	}
-
-	function writeWithHeading(text, heading){
-		// Heading is smaller, in grey
-		doc.setFontSize(10);
-		doc.setTextColor(100);
-		doc.text(heading, cursorX, cursorY);
-		doc.setFontSize(12);
-		doc.setTextColor(0);
-		cursorNewLine();
-
-		doc.text(text, cursorX, cursorY);
-		cursorNewLine();
-		cursorNewLine();
-	}
-
-	function divider(){
-		doc.setDrawColor(200);	// Light grey
-		doc.setLineWidth(0.3);	// optional: thinner line
-		doc.line(cursorX, cursorY, (cursorX + usableWidth), cursorY);
-		cursorNewLine();
-	}
-
 
 	// Title
-	doc.text(companyName, cursorX, cursorY);
-
 	doc.setFontSize(16);
 	doc.setFont(undefined, "bold")
-
-	const textWidth = doc.getTextWidth("INVOICE");
-	cursorX = margin + usableWidth - textWidth;
-	doc.text("INVOICE", cursorX, cursorY);
+	
+	doc.text(companyName, cursorX, cursorY);
 	
 	doc.setFontSize(12);
 	doc.setFont(undefined, "normal")
+	
+	const textWidth = doc.getTextWidth("Invoice");
+	cursorX = margin + usableWidth - textWidth;
+	doc.text("Invoice", cursorX, cursorY);
+
 	cursorNewLine();
 	
-
+	
 	// Invoice details
+	let invoiceDetailsBody = [["Date", date.format("LL")]];
+	if(invoiceNumber !== "") invoiceDetailsBody.push(["Invoice No.", invoiceNumber]);
+
 	autoTable(doc, {
 		theme: "grid",
 		startY: cursorY,
 		margin: { left: (margin+2*(usableWidth/3)), right: margin },
-		body: [
-			["Invoice No.", invoiceNumber],
-			["Date", date.format("LL")],
-		],
-		columnStyles: { 1: { halign: "right" } }
+		body: invoiceDetailsBody,
+		columnStyles: {
+			0: { textColor: "#969696" },
+			1: { halign: "right" }
+		}
 	});
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
-	divider();
 
+	// Customer details
+	let customerDetailsHead = [];
+	let customerDetailsBody = [];
+	if(customerName !== ""){
+		customerDetailsHead.push("Bill to");
+		customerDetailsBody.push(customerName);
+	}
+	if(projectAddress !== ""){
+		customerDetailsHead.push("Address");
+		customerDetailsBody.push(projectAddress);
+	}
 
-	// Bill to and Address
 	autoTable(doc, {
-		theme: "grid",
+		theme: "plain",
 		startY: cursorY,
 		margin: { left: margin, right: margin },
-		head: [['Bill to', 'Address']],
-		body: [[customerName, projectAddress]],
+		head: [customerDetailsHead],
+		body: [customerDetailsBody],
 		headStyles: {
 			fillColor: "#FFFFFF",
-			textColor: "#000000",
+			textColor: "#969696",
 			fontStyle: "normal",
 			fontSize: 8
 		},
@@ -115,20 +100,16 @@ export default function generatePDF(
 
 
 	// Notes
-	autoTable(doc, {
-		theme: "plain",
-		startY: cursorY,
-		margin: { left: margin, right: margin },
-		head: [['Notes']],
-		body: [[notes]],
-		headStyles: {
-			fillColor: "#FFFFFF",
-			textColor: "#000000",
-			fontStyle: "normal",
-			fontSize: 8
-		}
-	});
-	cursorY = doc.lastAutoTable.finalY + lineHeight;
+	if(notes !== ""){
+		autoTable(doc, {
+			theme: "plain",
+			startY: cursorY,
+			margin: { left: margin, right: margin },
+			body: [[notes]]
+		});
+		cursorY = doc.lastAutoTable.finalY + lineHeight;
+	}
+	cursorNewLine();
 
 
 	// Items
@@ -136,16 +117,16 @@ export default function generatePDF(
 		theme: "grid",
 		startY: cursorY,
 		margin: { left: margin, right: margin },
-		head: [['Description', 'Rate', 'Quantity', 'Amount']],
+		head: [['Description', 'Quantity', 'Rate', 'Amount']],
 		body: items.map(item => [
 			item.description,
-			"$" + parseFloat(item.rate).toFixed(2),
 			item.qty,
+			"$" + parseFloat(item.rate).toFixed(2),
 			"$" + parseFloat(item.amount).toFixed(2),
 		]),
 		headStyles: {
-			fillColor: "#EBEBEB",
-			textColor: "#000000",
+			fillColor: "#FBFBFB",
+			textColor: "#969696",
 			fontStyle: "normal",
 			fontSize: 8
 		},
@@ -156,30 +137,55 @@ export default function generatePDF(
 			}
 		},
 		columnStyles: {
+			0: { cellWidth: (50 * (usableWidth/100)) },
 			3: { halign: 'right' },
 		},
+		bodyStyles: {
+			cellPadding: 4,
+			textColor: "#000000",
+		}
 	});
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
 
 	// Summary
 	autoTable(doc, {
-		theme: "grid",
+		theme: "plain",
 		startY: cursorY,
-		margin: { left: (margin+(usableWidth/2)), right: margin },
+		margin: { left: (margin+2*(usableWidth/3)), right: margin },
 		body: [
 			['Subtotal', "$" + parseFloat(summary.subtotal).toFixed(2)],
 			['Tax', "$" + parseFloat(summary.tax).toFixed(2)],
-			['Total', "$" + parseFloat(summary.total).toFixed(2)]
+		],
+		columnStyles: {
+			0: { textColor: "#969696" },
+			1: { halign: 'right' }
+		}
+	})
+	cursorY = doc.lastAutoTable.finalY + lineHeight;
+
+	cursorX = (margin+2*(usableWidth/3));
+	doc.setDrawColor("#C7C7C7");	// Light grey
+	doc.setLineWidth(0.15);
+	doc.line(cursorX, cursorY, (margin + usableWidth), cursorY);
+	cursorNewLine();
+
+
+	autoTable(doc, {
+		theme: "plain",
+		startY: cursorY,
+		margin: { left: (margin+2*(usableWidth/3)), right: margin },
+		body: [
+			['Total', "$" + parseFloat(summary.total).toFixed(2)],
 		],
 		styles: {
-			halign: 'right', // aligns text inside cells to right
+			fontSize: "12"
 		},
 		columnStyles: {
-			0: { halign: 'right' },
+			0: { textColor: "#969696" },
 			1: { halign: 'right', fontStyle: 'bold' }
 		}
-	});
+	})
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
 
