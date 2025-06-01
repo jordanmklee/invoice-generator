@@ -129,11 +129,26 @@ export default function Form(props){
 						<Typography variant="h5">Invoice Details</Typography>
 						
 						<Stack gap="32px" direction="row" >
-							<Stack style={{ flex: 2 }}>
+							<Stack gap="16px" style={{ flex: 2 }}>
 								<FormTextfield
 									label="Company Name"
 									value={props.companyName}
 									onChange={props.setCompanyName}/>
+								
+								<FormTextfield
+									label="Email"
+									value={props.companyEmail}
+									onChange={props.setCompanyEmail}/>
+								
+								<FormTextfield
+									label="Phone"
+									value={props.companyPhone}
+									onChange={props.setCompanyPhone}/>
+								
+								<FormTextfield
+									label="Business Number"
+									value={props.companyBusinessNumber}
+									onChange={props.setCompanyBusinessNumber}/>
 							</Stack>
 
 							<Stack gap="16px" style={{ flex: 1 }}>

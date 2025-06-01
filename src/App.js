@@ -14,7 +14,10 @@ import './App.css';
 
 export default function App(){
 	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
-	
+	const [companyPhone, setCompanyPhone] = useState(localStorage.getItem("companyPhone"));
+	const [companyEmail, setCompanyEmail] = useState(localStorage.getItem("companyEmail"));
+	const [companyBusinessNumber, setCompanyBusinessNumber] = useState(localStorage.getItem("companyBusinessNumber"));
+
 	const [date, setDate] = useState(dayjs(new Date()));
 	const [invoiceNumber, setInvoiceNumber] = useState("");
 
@@ -65,9 +68,12 @@ export default function App(){
 						sx={{ textTransform: "none" }}
 						onClick={() => generatePDF(
 							companyName,
-							customerName,
+							companyEmail,
+							companyPhone,
+							companyBusinessNumber,
 							date,
 							invoiceNumber,
+							customerName,
 							projectAddress,
 							notes,
 							items,
@@ -81,10 +87,29 @@ export default function App(){
 
 			<Container style={{ paddingTop: "64px", paddingBottom: "128px" }}>
 				<Form
-					companyName={companyName} setCompanyName={setCompanyName}
-					customerName={customerName} setCustomerName={setCustomerName}
+					companyName={companyName}
+					setCompanyName={value => {
+						localStorage.setItem("companyName", value);
+						setCompanyName(value);
+					}}
+					companyEmail={companyEmail}
+					setCompanyEmail={ value => {
+						localStorage.setItem("companyEmail", value);
+						setCompanyEmail(value);
+					}}
+					companyPhone={companyPhone}
+					setCompanyPhone={ value => {
+						localStorage.setItem("companyPhone", value);
+						setCompanyPhone(value);
+					}}
+					companyBusinessNumber={companyBusinessNumber}
+					setCompanyBusinessNumber={ value => {
+						localStorage.setItem("companyBusinessNumber", value);
+						setCompanyBusinessNumber(value);
+					}}
 					date={date} setDate={setDate}
 					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
+					customerName={customerName} setCustomerName={setCustomerName}
 					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
 					notes={notes} setNotes={setNotes}
 					items={items} setItems={setItems}

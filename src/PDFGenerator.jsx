@@ -4,9 +4,12 @@ import autoTable from 'jspdf-autotable';
 
 export default function generatePDF(
 							companyName,
-							customerName,
+							companyEmail,
+							companyPhone,
+							companyBusinessNumber,
 							date,
 							invoiceNumber,
+							customerName,
 							projectAddress,
 							notes,
 							items,
@@ -29,9 +32,36 @@ export default function generatePDF(
 	let cursorY = margin;
 
 
+
+	const tableStyles = {
+		lineColor: "#000000"
+	}
+	const headingStyles = {
+		fillColor: "#FFFFFF",
+		textColor: "#000000",
+		fontStyle: "normal",
+		fontSize: 10,
+		lineColor: "#000000",
+		cellPadding: { bottom: 2 },
+	}
+	const bodyStyles = {
+		cellPadding: 0,
+	}
+	const itemRowStyles = {
+		cellPadding: 4,
+		textColor: "#000000",
+	}
+
 	function cursorNewLine(){
 		cursorX = margin;	// TODO this is redundant since cursorX will likely not change
 		cursorY += lineHeight;
+	}
+
+	function divider(){
+		doc.setDrawColor("#000000");
+		doc.line(cursorX, cursorY, (cursorX + usableWidth), cursorY);
+		cursorNewLine();
+		cursorNewLine();
 	}
 
 
@@ -49,7 +79,24 @@ export default function generatePDF(
 	doc.text("Invoice", cursorX, cursorY);
 
 	cursorNewLine();
+
+
+
+	let companyDetailsBody = [];
+	if(companyEmail !== "") companyDetailsBody.push([companyEmail]);
+	if(companyPhone !== "") companyDetailsBody.push([companyPhone]);
+	if(companyBusinessNumber !== "") companyDetailsBody.push([companyBusinessNumber]);
 	
+	autoTable(doc, {
+		theme: "plain",
+		start: cursorY,
+		margin: { left: margin, right: margin, top: cursorY },
+		body: companyDetailsBody,
+		styles: { cellPadding: { bottom: 2 } }
+	});
+
+	let companyDetailsBodyHeight = doc.lastAutoTable.finalY + lineHeight;
+
 	
 	// Invoice details
 	let invoiceDetailsBody = [["Date", date.format("LL")]];
@@ -60,13 +107,14 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: (margin+2*(usableWidth/3)), right: margin },
 		body: invoiceDetailsBody,
-		columnStyles: {
-			0: { textColor: "#969696" },
-			1: { halign: "right" }
-		}
+		styles: {...tableStyles, textColor: "#000000"},
+		columnStyles: { 1: { halign: "right" } }
 	});
-	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
+	let invoiceDetailsBodyHeight = doc.lastAutoTable.finalY +  lineHeight;
+	cursorY = (companyDetailsBodyHeight > invoiceDetailsBodyHeight) ? companyDetailsBodyHeight : invoiceDetailsBodyHeight;
+
+	divider();
 
 	// Customer details
 	let customerDetailsHead = [];
@@ -86,12 +134,8 @@ export default function generatePDF(
 		margin: { left: margin, right: margin },
 		head: [customerDetailsHead],
 		body: [customerDetailsBody],
-		headStyles: {
-			fillColor: "#FFFFFF",
-			textColor: "#969696",
-			fontStyle: "normal",
-			fontSize: 8
-		},
+		headStyles: headingStyles,
+		bodyStyles: bodyStyles,
 		styles: {
 			cellWidth: usableWidth/2,
 		},
@@ -110,7 +154,7 @@ export default function generatePDF(
 		cursorY = doc.lastAutoTable.finalY + lineHeight;
 	}
 	cursorNewLine();
-
+	cursorNewLine();
 
 	// Items
 	autoTable(doc, {
@@ -124,12 +168,7 @@ export default function generatePDF(
 			"$" + parseFloat(item.rate).toFixed(2),
 			"$" + parseFloat(item.amount).toFixed(2),
 		]),
-		headStyles: {
-			fillColor: "#FBFBFB",
-			textColor: "#969696",
-			fontStyle: "normal",
-			fontSize: 8
-		},
+		headStyles: {...headingStyles, cellPadding: { left: 4, bottom: 2, right: 4 }},
 		// Dynamically right-justify the "Amount" column header (ie. column 3)
 		didParseCell: function (data) {
 			if (data.section === 'head' && data.column.index === 3) {
@@ -140,10 +179,8 @@ export default function generatePDF(
 			0: { cellWidth: (50 * (usableWidth/100)) },
 			3: { halign: 'right' },
 		},
-		bodyStyles: {
-			cellPadding: 4,
-			textColor: "#000000",
-		}
+		bodyStyles: itemRowStyles,
+		styles: tableStyles
 	});
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
@@ -157,16 +194,12 @@ export default function generatePDF(
 			['Subtotal', "$" + parseFloat(summary.subtotal).toFixed(2)],
 			['Tax', "$" + parseFloat(summary.tax).toFixed(2)],
 		],
-		columnStyles: {
-			0: { textColor: "#969696" },
-			1: { halign: 'right' }
-		}
+		columnStyles: { 1: { halign: 'right' } }
 	})
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
 	cursorX = (margin+2*(usableWidth/3));
-	doc.setDrawColor("#C7C7C7");	// Light grey
-	doc.setLineWidth(0.15);
+	doc.setDrawColor("#000000");	// Light grey
 	doc.line(cursorX, cursorY, (margin + usableWidth), cursorY);
 	cursorNewLine();
 
@@ -178,13 +211,8 @@ export default function generatePDF(
 		body: [
 			['Total', "$" + parseFloat(summary.total).toFixed(2)],
 		],
-		styles: {
-			fontSize: "12"
-		},
-		columnStyles: {
-			0: { textColor: "#969696" },
-			1: { halign: 'right', fontStyle: 'bold' }
-		}
+		styles: { fontSize: "12" },
+		columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } }
 	})
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
