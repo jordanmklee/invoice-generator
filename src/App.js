@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Stack, AppBar, Toolbar, Typography, Button, Divider, Container } from '@mui/material';
+import { Stack, AppBar, Toolbar, Typography, Button, Divider, Container, Link } from '@mui/material';
 import { FileDownload } from "@mui/icons-material";
 
 import dayjs from "dayjs";
@@ -58,15 +58,32 @@ export default function App(){
 	// TODO define colours globally
 	// TODO make a helper function to parse dollar amounts (and handle NaN errors when generating)
 	return(
-		<Stack direction="col" style={{ background: "lightgrey" }}>
+		<Stack direction="col" style={{ height: "100vh" }}>
 			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
-				<Toolbar sx={{ justifyContent: "space-between" }}>
-					<Typography variant="h6" style={{ color: "grey" }}>jordanmklee / <span style={{ color: "black" }}>invoice-generator</span></Typography>
+				<Toolbar>
+					<Container>
+						<Typography variant="h6" style={{ color: "grey" }}>
+							<Link
+								href="https://github.com/jordanmklee"
+								target="_blank" 
+        						rel="noopener noreferrer"
+								sx={{
+									textDecoration: "none",
+									color: "grey"
+								}}>
+								jordanmklee
+							</Link>
+							/
+							<span style={{ color: "black" }}>
+								invoice-generator
+							</span>
+						</Typography>
+					</Container>
 				</Toolbar>
 				<Divider/>
 			</AppBar>
 
-			<Container style={{ paddingTop: "64px", paddingBottom: "128px" }}>
+			<Container style={{ paddingTop: "64px", height: "100%" }}>
 				<Form
 					companyName={companyName}
 					setCompanyName={value => {
@@ -95,7 +112,7 @@ export default function App(){
 					notes={notes} setNotes={setNotes}
 					items={items} setItems={setItems}
 					summary={summary}
-					sx={{ flex: 2, overflowY: "auto" }}/>
+					sx={{ overflowY: "auto" }}/>
 			</Container>
 		</Stack>
 	)

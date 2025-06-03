@@ -1,7 +1,6 @@
-import { Button, Stack } from '@mui/material';
+import { Button, Stack, Divider } from '@mui/material';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { Table, TableBody, TableRow, TableCell } from '@mui/material';
-import { Card, CardContent } from '@mui/material';
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,19 +14,19 @@ import { Close as CloseIcon } from '@mui/icons-material';
 import generatePDF from '../PDFGenerator';
 
 
-// Wrapper for MUI Textfield with styles and label
+// Wrapper for MUI Textfield with styles
 function FormTextfield(props){
 	return(
-		<Stack sx={{ flex: 1 }}>
-			<Typography variant="overline" sx={{ color: "#969696" }}>{props.label}</Typography>
-			<TextField
-				size="small"
-				placeholder={props.placeholder}
-				value={props.value}
-				onChange={e => props.onChange(e.target.value)}
-				multiline={props.multiline}
-				minRows={3}/>
-		</Stack>
+		<TextField
+			variant="filled"
+			slotProps={{ input: { disableUnderline: true } }}
+			fullWidth
+			size="small"
+			label={props.label}
+			value={props.value}
+			onChange={e => props.onChange(e.target.value)}
+			multiline={props.multiline}
+			minRows={3}/>
 	)
 }
 
@@ -122,6 +121,7 @@ export default function Form(props){
 		props.setItems(temp);
 	}
 
+
 	function handleGeneratePDFClick(){
 		generatePDF(
 			props.companyName,
@@ -140,158 +140,145 @@ export default function Form(props){
 
 
 	return(
-		<Stack gap="32px" sx={{ ...props.sx, padding: "32px" }}>
-			<Card>
-				<CardContent>
-					<Stack padding="16px" gap="32px">
-						<Typography variant="h5">Invoice Details</Typography>
-						
-						<Stack gap="32px" direction="row" >
-							<Stack gap="16px" style={{ flex: 2 }}>
-								<FormTextfield
-									label="Company Name"
-									value={props.companyName}
-									onChange={props.setCompanyName}/>
-								
-								<FormTextfield
-									label="Email"
-									value={props.companyEmail}
-									onChange={props.setCompanyEmail}/>
-								
-								<FormTextfield
-									label="Phone"
-									value={props.companyPhone}
-									onChange={props.setCompanyPhone}/>
-								
-								<FormTextfield
-									label="Business Number"
-									value={props.companyBusinessNumber}
-									onChange={props.setCompanyBusinessNumber}/>
-							</Stack>
+		<Stack gap="32px" direction="row" paddingTop="32px" sx={{ ...props.sx }}>
+			<Stack gap="48px" flex={3}>
+				<Stack gap="24px">
+					<Typography variant="h6">Company</Typography>
+					<FormTextfield
+						label="Company Name"
+						value={props.companyName}
+						onChange={props.setCompanyName}/>
+					
+					<FormTextfield
+						label="Email"
+						value={props.companyEmail}
+						onChange={props.setCompanyEmail}/>
+					
+					<FormTextfield
+						label="Phone"
+						value={props.companyPhone}
+						onChange={props.setCompanyPhone}/>
+					
+					<FormTextfield
+						label="Business Number"
+						value={props.companyBusinessNumber}
+						onChange={props.setCompanyBusinessNumber}/>
+				</Stack>
 
-							<Stack gap="16px" style={{ flex: 1 }}>
-								<Stack>
-									<Typography variant="overline" sx={{ color: "#969696" }}>Date</Typography>
-									<LocalizationProvider dateAdapter={AdapterDayjs}>
-										<DatePicker
-											slotProps={{ textField: { size: "small" } }}
-											format="LL"
-											value={props.date}
-											onChange={e => props.setDate(e)}/>
-									</LocalizationProvider>
-								</Stack>
+				<Divider/>
 
-								<FormTextfield
-									label="Invoice Number"
-									value={props.invoiceNumber}
-									onChange={props.setInvoiceNumber}/>
-							</Stack>
-						</Stack>
+				<Stack gap="24px">
+					<Typography variant="h6">Invoice Details</Typography>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<DatePicker
+							format="LL"
+							label="Date"
+							value={props.date}
+							onChange={e => props.setDate(e)}
+							slotProps={{
+								textField: {
+									size: "small",
+									variant: 'filled',
+									InputProps: {
+										disableUnderline: true,
+									},
+								}
+							}} />
+					</LocalizationProvider>
 
-						<Stack gap="32px" direction="row">
-							<FormTextfield
-								label="Bill To"
-								value={props.customerName}
-								onChange={props.setCustomerName}/>
+					<FormTextfield
+						label="Invoice Number"
+						value={props.invoiceNumber}
+						onChange={props.setInvoiceNumber}/>
 
-							<FormTextfield
-								label="Address"
-								value={props.projectAddress}
-								onChange={props.setProjectAddress}/>
-						</Stack>
+					<Stack gap="32px" direction="row">
+						<FormTextfield
+							label="Bill To"
+							value={props.customerName}
+							onChange={props.setCustomerName}/>
 
 						<FormTextfield
-								label="Notes (optional)"
-								value={props.notes}
-								onChange={props.setNotes}
-								multiline/>
+							label="Address"
+							value={props.projectAddress}
+							onChange={props.setProjectAddress}/>
 					</Stack>
-				</CardContent>
-			</Card>
 
-			<Stack gap="16px" direction="row" alignItems="flex-start" justifyContent="space-between">
+					<FormTextfield
+							label="Notes (optional)"
+							value={props.notes}
+							onChange={props.setNotes}
+							multiline/>
+				</Stack>
+			</Stack>
+
+			<Stack gap="16px" flex={2}>
 				{/* Items Form */}
-				<Card sx={{ flex: 3 }}>
-					<CardContent>
-						<Stack padding="16px" gap="16px">
-							<Typography variant="h5">Items</Typography>
+				<Stack gap="16px">
+					<Stack direction="row" justifyContent="space-between">
+						<Typography variant="h5">Items</Typography>
+						<Button
+							variant="text"
+							size="small"
+							startIcon={<AddIcon />}
+							onClick={addNewItem}>New Item</Button>
+					</Stack>
+					<Table>
+						<TableBody>
+							<TableRow>
+								<TableCell sx={{ width: "50%" }}>
+									<Typography variant="overline" sx={{ color: "#969696" }}>Description</Typography>
+								</TableCell>
+								<TableCell sx={{ width: "15%" }}>
+									<Typography variant="overline" sx={{ color: "#969696" }}>Quantity</Typography>
+								</TableCell>
+								<TableCell>
+									<Typography variant="overline" sx={{ color: "#969696" }}>Rate</Typography>
+								</TableCell>
+								<TableCell/>
+							</TableRow>
+							{
+								props.items.map((item, index) => (
+									<InvoiceItem
+										key={index}
+										id={index}
+										data={item}
+										setItemProperty={(property, value) => setItemProperty(property, value, index)}
+										handleDelete={deleteItem}
+										// Autofocus newly added items
+										autoFocus={ (index === props.items.length - 1) && index !== 0 }
+										addNewItem={addNewItem}/>
+								))
+							}
+						</TableBody>
+					</Table>
 
-							<Table>
-								<TableBody>
-									<TableRow>
-										<TableCell sx={{ width: "50%" }}>
-											<Typography variant="overline" sx={{ color: "#969696" }}>Description</Typography>
-										</TableCell>
-										<TableCell sx={{ width: "15%" }}>
-											<Typography variant="overline" sx={{ color: "#969696" }}>Quantity</Typography>
-										</TableCell>
-										<TableCell>
-											<Typography variant="overline" sx={{ color: "#969696" }}>Rate</Typography>
-										</TableCell>
-										<TableCell/>
-									</TableRow>
-									{
-										props.items.map((item, index) => (
-											<InvoiceItem
-												key={index}
-												id={index}
-												data={item}
-												setItemProperty={(property, value) => setItemProperty(property, value, index)}
-												handleDelete={deleteItem}
-												// Autofocus newly added items
-												autoFocus={ (index === props.items.length - 1) && index !== 0 }
-												addNewItem={addNewItem}/>
-										))
-									}
-								</TableBody>
-							</Table>
-
-							<Button
-								variant="text"
-								startIcon={<AddIcon/>}
-								onClick={addNewItem}>New Item</Button>
-							<Button
-								variant="contained"
-								onClick={handleGeneratePDFClick}>Generate PDF</Button>
-						</Stack>
-					</CardContent>
-				</Card>
+					
+				</Stack>
 				
 				{/* Summary */}
-				<Card sx={{ flex: 1 }}>
-					<CardContent>
-						<Table>
-							<TableBody>
-								<TableRow>
-									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="body1" style={{ color: "#969696" }}>Subtotal</Typography>
-									</TableCell>
-									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">${parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
-									</TableCell>
-								</TableRow>
+				<Stack gap="32px">
+					<Stack gap="16px">
+						<Stack direction="row" justifyContent="space-between">
+							<Typography variant="body1" style={{ color: "#969696" }}>Subtotal</Typography>
+							<Typography variant="body1">${parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
+						</Stack>
 
-								<TableRow>
-									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="body1" style={{ color: "#969696" }}>Tax</Typography>
-									</TableCell>
-									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="body1">${parseFloat(props.summary.tax).toFixed(2)}</Typography>
-									</TableCell>
-								</TableRow>
+						<Stack direction="row" justifyContent="space-between">
+							<Typography variant="body1" style={{ color: "#969696" }}>Tax</Typography>
+							<Typography variant="body1">${parseFloat(props.summary.subtotal).toFixed(2)}</Typography>
+						</Stack>
 
-								<TableRow>
-									<TableCell sx={{ borderBottom: "none" }}>
-										<Typography variant="h6" style={{ color: "#969696" }}>Total</Typography>
-									</TableCell>
-									<TableCell align="right" sx={{ borderBottom: "none" }}>
-										<Typography variant="h6" style={{ fontWeight: 600 }}>${parseFloat(props.summary.total).toFixed(2)}</Typography>
-									</TableCell>
-								</TableRow>
-							</TableBody>
-						</Table>
-					</CardContent>
-				</Card>
+						<Stack direction="row" justifyContent="space-between" paddingTop="16px">
+							<Typography variant="h6" style={{ color: "#969696" }}>Total</Typography>
+							<Typography variant="h6" style={{ fontWeight: 600 }}>${parseFloat(props.summary.total).toFixed(2)}</Typography>
+						</Stack>
+					</Stack>
+
+					<Button
+						fullWidth
+						variant="contained"
+						onClick={handleGeneratePDFClick}>Generate PDF</Button>
+				</Stack>
 			</Stack>
 		</Stack>
 	)
