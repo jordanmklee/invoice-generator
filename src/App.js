@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 
-import { Stack, AppBar, Toolbar, Typography, Button, Divider, Container, Link } from '@mui/material';
-import { FileDownload } from "@mui/icons-material";
+import { Stack, AppBar, Toolbar, Typography, Container, Link } from '@mui/material';
 
 import dayjs from "dayjs";
 
 import Form from "./components/Form";
-
-import generatePDF from "./PDFGenerator";
 
 import './App.css';
 
@@ -54,15 +51,14 @@ export default function App(){
 		})
 	}, [items])
 
-	// TODO define MUI typography styles
-	// TODO define colours globally
+
 	// TODO make a helper function to parse dollar amounts (and handle NaN errors when generating)
 	return(
-		<Stack direction="col" style={{ height: "100vh" }}>
-			<AppBar position="fixed" sx={{ background: "white", color: "black", boxShadow: "none" }}>
+		<Stack direction="col" style={{ minHeight: "100vh", background: "#ECF1F5" }}>
+			<AppBar position="fixed" sx={{ background: "#FFFFFF", color: "black", boxShadow: "none" }}>
 				<Toolbar>
 					<Container>
-						<Typography variant="h6" style={{ color: "grey" }}>
+						<Typography variant="h2" style={{ color: "grey" }}>
 							<Link
 								href="https://github.com/jordanmklee"
 								target="_blank" 
@@ -80,10 +76,9 @@ export default function App(){
 						</Typography>
 					</Container>
 				</Toolbar>
-				<Divider/>
 			</AppBar>
 
-			<Container style={{ paddingTop: "64px", height: "100%" }}>
+			<Container style={{ paddingTop: "64px", paddingBottom: "64px", height: "100%" }}>
 				<Form
 					companyName={companyName}
 					setCompanyName={value => {

@@ -217,7 +217,10 @@ export default function generatePDF(
 	cursorY = doc.lastAutoTable.finalY + lineHeight;
 
 
-	doc.save("generated.pdf")
+	// Generate a blob and open in new tab
+	const blob = doc.output("blob");
+	const url = URL.createObjectURL(blob);
+	window.open(url, "_blank");
 	return;
 }
 
