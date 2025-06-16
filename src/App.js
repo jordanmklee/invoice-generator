@@ -1,60 +1,13 @@
-import { useState, useEffect } from "react";
-
 import { Stack, AppBar, Toolbar, Typography, Container, Link } from '@mui/material';
-
-import dayjs from "dayjs";
 
 import Form from "./components/Form";
 
 import './App.css';
 
 
-export default function App(){
-	const [companyName, setCompanyName] = useState(localStorage.getItem("companyName"));
-	const [companyPhone, setCompanyPhone] = useState(localStorage.getItem("companyPhone"));
-	const [companyEmail, setCompanyEmail] = useState(localStorage.getItem("companyEmail"));
-	const [companyBusinessNumber, setCompanyBusinessNumber] = useState(localStorage.getItem("companyBusinessNumber"));
-
-	const [date, setDate] = useState(dayjs(new Date()));
-	const [invoiceNumber, setInvoiceNumber] = useState("");
-
-	const [customerName, setCustomerName] = useState("");
-	const [projectAddress, setProjectAddress] = useState("");
-	const [notes, setNotes] = useState("");
-
-	const [items, setItems] = useState([{
-		description: "",
-		qty: 1,
-		rate: 0.00,
-		amount: 0.00
-	}]);
-	const [summary, setSummary] = useState({
-		subtotal: 0.00,
-		tax: 0.00,
-		total: 0.00
-	});
-	
-	// Update the summary on invoice item change
-	useEffect(() => {
-		let subtotal = 0.00;
-		items.forEach(item => {
-			subtotal += item.amount;
-		})
-
-		let tax = subtotal * 0.05;
-		let total = subtotal + tax;
-
-		setSummary({
-			subtotal: subtotal,
-			tax: tax,
-			total: total,
-		})
-	}, [items])
-
-
-	// TODO make a helper function to parse dollar amounts (and handle NaN errors when generating)
+export default function App(){	
 	return(
-		<Stack direction="col" style={{ minHeight: "100vh", background: "#ECF1F5" }}>
+		<Stack style={{ minHeight: "100vh", background: "#ECF1F5" }}>
 			<AppBar position="fixed" sx={{ background: "#FFFFFF", color: "black", boxShadow: "none" }}>
 				<Toolbar>
 					<Container>
@@ -79,35 +32,7 @@ export default function App(){
 			</AppBar>
 
 			<Container style={{ paddingTop: "64px", paddingBottom: "64px", height: "100%" }}>
-				<Form
-					companyName={companyName}
-					setCompanyName={value => {
-						localStorage.setItem("companyName", value);
-						setCompanyName(value);
-					}}
-					companyEmail={companyEmail}
-					setCompanyEmail={ value => {
-						localStorage.setItem("companyEmail", value);
-						setCompanyEmail(value);
-					}}
-					companyPhone={companyPhone}
-					setCompanyPhone={ value => {
-						localStorage.setItem("companyPhone", value);
-						setCompanyPhone(value);
-					}}
-					companyBusinessNumber={companyBusinessNumber}
-					setCompanyBusinessNumber={ value => {
-						localStorage.setItem("companyBusinessNumber", value);
-						setCompanyBusinessNumber(value);
-					}}
-					date={date} setDate={setDate}
-					invoiceNumber={invoiceNumber} setInvoiceNumber={setInvoiceNumber}
-					customerName={customerName} setCustomerName={setCustomerName}
-					projectAddress={projectAddress} setProjectAddress={setProjectAddress}
-					notes={notes} setNotes={setNotes}
-					items={items} setItems={setItems}
-					summary={summary}
-					sx={{ overflowY: "auto" }}/>
+				<Form/>
 			</Container>
 		</Stack>
 	)

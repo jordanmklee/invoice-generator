@@ -2,19 +2,7 @@ import jspdf from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 
-export default function generatePDF(
-							companyName,
-							companyEmail,
-							companyPhone,
-							companyBusinessNumber,
-							date,
-							invoiceNumber,
-							customerName,
-							projectAddress,
-							notes,
-							items,
-							summary
-						){
+export default function generatePDF(company, invoice){
 	const doc = new jspdf({ format: 'a4' });
 
 	// 1 inch margins
@@ -69,7 +57,7 @@ export default function generatePDF(
 	doc.setFontSize(16);
 	doc.setFont(undefined, "bold")
 	
-	doc.text(companyName, cursorX, cursorY);
+	doc.text(company.name, cursorX, cursorY);
 	
 	doc.setFontSize(12);
 	doc.setFont(undefined, "normal")
@@ -83,9 +71,9 @@ export default function generatePDF(
 
 
 	let companyDetailsBody = [];
-	if(companyEmail !== "") companyDetailsBody.push([companyEmail]);
-	if(companyPhone !== "") companyDetailsBody.push([companyPhone]);
-	if(companyBusinessNumber !== "") companyDetailsBody.push([companyBusinessNumber]);
+	if(company.email !== "") companyDetailsBody.push([company.email]);
+	if(company.phone !== "") companyDetailsBody.push([company.phone]);
+	if(company.businessNumber !== "") companyDetailsBody.push([company.businessNumber]);
 	
 	autoTable(doc, {
 		theme: "plain",
@@ -99,8 +87,8 @@ export default function generatePDF(
 
 	
 	// Invoice details
-	let invoiceDetailsBody = [["Date", date.format("LL")]];
-	if(invoiceNumber !== "") invoiceDetailsBody.push(["Invoice No.", invoiceNumber]);
+	let invoiceDetailsBody = [["Date", invoice.date.format("LL")]];
+	if(invoice.number !== "") invoiceDetailsBody.push(["Invoice No.", invoice.number]);
 
 	autoTable(doc, {
 		theme: "grid",
@@ -119,13 +107,13 @@ export default function generatePDF(
 	// Customer details
 	let customerDetailsHead = [];
 	let customerDetailsBody = [];
-	if(customerName !== ""){
+	if(invoice.customer !== ""){
 		customerDetailsHead.push("Bill to");
-		customerDetailsBody.push(customerName);
+		customerDetailsBody.push(invoice.customer);
 	}
-	if(projectAddress !== ""){
+	if(invoice.address !== ""){
 		customerDetailsHead.push("Address");
-		customerDetailsBody.push(projectAddress);
+		customerDetailsBody.push(invoice.address);
 	}
 
 	autoTable(doc, {
@@ -144,12 +132,12 @@ export default function generatePDF(
 
 
 	// Notes
-	if(notes !== ""){
+	if(invoice.notes !== ""){
 		autoTable(doc, {
 			theme: "plain",
 			startY: cursorY,
 			margin: { left: margin, right: margin },
-			body: [[notes]]
+			body: [[invoice.notes]]
 		});
 		cursorY = doc.lastAutoTable.finalY + lineHeight;
 	}
@@ -162,7 +150,7 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: margin, right: margin },
 		head: [['Description', 'Quantity', 'Rate', 'Amount']],
-		body: items.map(item => [
+		body: invoice.items.list.map(item => [
 			item.description,
 			item.qty,
 			"$" + parseFloat(item.rate).toFixed(2),
@@ -191,8 +179,8 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: (margin+2*(usableWidth/3)), right: margin },
 		body: [
-			['Subtotal', "$" + parseFloat(summary.subtotal).toFixed(2)],
-			['Tax', "$" + parseFloat(summary.tax).toFixed(2)],
+			['Subtotal', "$" + parseFloat(invoice.items.summary.subtotal).toFixed(2)],
+			['Tax', "$" + parseFloat(invoice.items.summary.tax).toFixed(2)],
 		],
 		columnStyles: { 1: { halign: 'right' } }
 	})
@@ -209,7 +197,7 @@ export default function generatePDF(
 		startY: cursorY,
 		margin: { left: (margin+2*(usableWidth/3)), right: margin },
 		body: [
-			['Total', "$" + parseFloat(summary.total).toFixed(2)],
+			['Total', "$" + parseFloat(invoice.items.summary.total).toFixed(2)],
 		],
 		styles: { fontSize: "12" },
 		columnStyles: { 1: { halign: 'right', fontStyle: 'bold' } }

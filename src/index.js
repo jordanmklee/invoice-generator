@@ -90,6 +90,22 @@ const theme = createTheme({
 				},
 			},
 		},
+		MuiIconButton: {
+			defaultProps: {
+				size: 'small',
+			},
+			styleOverrides: {
+				sizeSmall: {
+					padding: 4,
+					width: 32,
+					height: 32,
+					// Also style the Icon child
+					'& .MuiSvgIcon-root': {
+						fontSize: '1.25rem',
+					},
+				},
+			},
+		},
 	}
 });
 
