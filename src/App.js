@@ -8,7 +8,7 @@ import './App.css';
 export default function App(){	
 	return(
 		<Stack style={{ minHeight: "100vh", background: "#ECF1F5" }}>
-			<AppBar position="fixed" sx={{ background: "#FFFFFF", color: "black", boxShadow: "none" }}>
+			<AppBar position="fixed" sx={{ background: "#FFFFFF", color: "black", boxShadow: "none", borderBottom: "1px solid #ECF1F5" }}>
 				<Toolbar>
 					<Container>
 						<Typography variant="h2" style={{ color: "grey" }}>

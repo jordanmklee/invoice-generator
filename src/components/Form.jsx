@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Button, Stack, Divider, TableHead, TableFooter } from '@mui/material';
+import { Button, Box, Stack, Divider, TableHead, TableFooter } from '@mui/material';
 import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { Table, TableBody, TableRow, TableCell } from '@mui/material';
 
@@ -21,7 +21,6 @@ import dayjs from "dayjs";
 import generatePDF from '../PDFGenerator';
 
 export default function Form(props){
-	// TODO the fields should use the default value too
 	const [company, setCompany] = useState({
 		name: localStorage.getItem("company.name"),
 		phone: localStorage.getItem("company.phone"),
@@ -55,6 +54,7 @@ export default function Form(props){
 		notes: "",
 	})
 
+	// Updates React state and localStorage
 	function updateCompany(updates) {
 		setCompany(prev => {
 			const newCompany = { ...prev, ...updates };
@@ -69,13 +69,13 @@ export default function Form(props){
 		});
 	}
 
-
 	function updateInvoice(updates){
 		setInvoice(prev => ({
 			...prev,
 			...updates,
 		}))
 	}
+
 
 	// Update the summary calculation on item change
 	useEffect(() => {
@@ -138,7 +138,7 @@ export default function Form(props){
 	}
 
 	return(
-		<Stack gap="16px" paddingTop="32px" sx={{ ...props.sx, overflowY: "auto" }}>
+		<Stack gap="16px" paddingTop="32px">
 			<Stack gap="16px" direction="row" justifyContent="space-between">
 				<Typography variant="h1">
 					Create invoice
@@ -160,14 +160,16 @@ export default function Form(props){
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<DatePicker
 									format="LL"
+									sx={{flex: 1}}
 									label="Date"
 									value={invoice.date}
 									onChange={e => updateInvoice({ date: e.target.value })}/>
 							</LocalizationProvider>
 
 							<TextField
+								sx={{ flex: 1 }}
 								label="Invoice Number"
-								value={props.invoiceNumber}
+								value={invoice.number}
 								onChange={e => updateInvoice({ number: e.target.value })}/>
 						</Stack>
 
@@ -214,8 +216,8 @@ export default function Form(props){
 
 						<TextField
 							label="Notes (optional)"
-							value={props.notes}
-							onChange={e => props.setNotes(e.target.value)}
+							value={invoice.notes}
+							onChange={e => updateInvoice({ notes: e.target.value })}
 							multiline
 							minRows={3}/>
 					</StyledPaper>
@@ -227,13 +229,13 @@ export default function Form(props){
 						
 						<TextField
 							label="Bill To"
-							value={props.customerName}
-							onChange={e => props.setCustomerName(e.target.value)}/>
+							value={invoice.customer}
+							onChange={e => updateInvoice({ customer: e.target.value })}/>
 
 						<TextField
 							label="Address"
-							value={props.projectAddress}
-							onChange={e => props.setProjectAddress(e.target.value)}/>
+							value={invoice.address.address1}
+							onChange={e => updateInvoice({ address: { address1: e.target.value }})}/>
 
 						<Divider/>
 						
@@ -262,6 +264,20 @@ export default function Form(props){
 
 function CompanyForm(props){
 	const [edit, setEdit] = useState(false);
+	const [company, setCompany] = useState(props.company);
+	
+	// Reset local state to default values, exit edit mode
+	function handleCancelClick(){
+		setCompany(props.company);
+		setEdit(false);
+	}
+
+	// Save local state to parent (Form.jsx), exit edit mode
+	function handleSaveClick() {
+		props.updateCompany(company);
+		setEdit(false);
+	}
+
 
 	return(
 		<StyledPaper>
@@ -276,43 +292,63 @@ function CompanyForm(props){
 			{
 				!edit
 					? (
-						<Stack gap="16px">
-							<Stack gap="8px">
-								<Typography variant="h2">{props.company.name}</Typography>
-								<Typography variant="body2">{props.company.email}</Typography>
-								<Typography variant="body2">{props.company.phone}</Typography>
-								<Typography variant="body2">{props.company.businessNumber}</Typography>
-							</Stack>
+						<Stack gap="8px">
+							<Typography variant="h2">{props.company.name}</Typography>
+							<Typography variant="body2">{props.company.email}</Typography>
+							<Typography variant="body2">{props.company.phone}</Typography>
+							<Typography variant="body2">{props.company.businessNumber}</Typography>
 						</Stack>
 					)
 					: (
 						<Stack gap="16px">
 							<TextField
 								label="Company Name"
-								value={props.company.name}
-								onChange={e => props.updateCompany({ name: e.target.value })}/>
+								value={company.name}
+								onChange={e => setCompany(prev => ({
+									...prev,
+									name: e.target.value
+									}))
+								}/>
 							
 							<TextField
 								label="Email"
-								value={props.company.email}
-								onChange={e => props.updateCompany({ email: e.target.value })}/>
+								value={company.email}
+								onChange={e => setCompany(prev => ({
+									...prev,
+									email: e.target.value
+									}))
+								}/>
 							
 							<TextField
 								label="Phone"
-								value={props.company.phone}
-								onChange={e => props.updateCompany({ phone: e.target.value })}/>
+								value={company.phone}
+								onChange={e => setCompany(prev => ({
+									...prev,
+									phone: e.target.value
+									}))
+								}/>
 							
 							<TextField
 								label="Business Number"
-								value={props.company.businessNumber}
-								onChange={e => props.updateCompany({ businessNumber: e.target.value })}/>
+								value={company.businessNumber}
+								onChange={e => setCompany(prev => ({
+									...prev,
+									businessNumber: e.target.value
+									}))
+								}/>
 							
 							<Stack gap="16px" direction="row" justifyContent="flex-end">
 								<Button
-									size="small">Cancel</Button>
+									size="small"
+									onClick={handleCancelClick}>
+									Cancel
+								</Button>
 								<Button
 									size="small"
-									variant="contained">Save</Button>
+									variant="contained"
+									onClick={handleSaveClick}>
+									Save
+								</Button>
 							</Stack>
 						</Stack>
 					)
